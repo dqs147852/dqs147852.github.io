@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>密码验证网站</title>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 200px;">
+        <form onsubmit="return checkPassword()">
+            <label for="password">请输入密码：</label>
+            <input type="password" id="password" name="password">
+            <br><br>
+            <input type="submit" value="提交">
+        </form>
+    </div>
+
+    <script>
+        function checkPassword() {
+            var password = document.getElementById("password").value;
+            
+            // 在这里设置正确的密码
+            var correctPassword = "xiaoduziushuai";
+            
+            if (password === correctPassword) {
+                window.location.href = "friend.html";  // 输入正确密码后跳转至指定网页
+                return false;  // 阻止表单提交
+            } else {
+                alert("密码错误，请重新输入！");
+                return false;  // 阻止表单提交
+            }
+        }
+    </script>
+</body>
+</html>
