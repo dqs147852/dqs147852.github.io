@@ -1,112 +1,98 @@
-
 <!DOCTYPE HTML>
+<html>
 <head>
-    <img alt="ip签名图片" src="https://www.ipip5.com/myip">
-    <link rel="shortcut icon" href="rainbow.ico"/>
-    <img alt="ip签名图片" src="https://www.ipip5.com/ipimg">
     <meta charset="UTF-8"/>
-    <title>hello</title>
+    <title>小杜的网站</title>
     <style>
-        .a1{
-            height: 50px;
-        }
-        .a2{
+        body {
+            background: #333;
+            font-family: Arial, sans-serif;
             text-align: center;
-            margin: auto;
+            color: white;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
-        .a3{
+        h1 {
             font-size: 30px;
-            background: lightcyan;
-            height: 40px;
-            width: 60px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-        .a4{
-            font-size: 20px;
-            background: pink;
-            height: 40px;
-            width: 64px;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
         }
-        .a5{
-            font-size: 30px;
-            background: red;
-            height: 40px;
-            width: 64px;
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background: linear-gradient(to right, #333, #222);
+            color: white;
+            text-decoration: none;
+            border: 1px solid #f7b733;
+            border-radius: 25px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
         }
-        span{
-            text-align: center;
-        }
-        #a1{
-            color: red;
-        }
-        #a2{
-            color: orange;
-        }
-        #a3{
-            color: yellow;
-        }
-        #a4{
-            color: green;
-        }
-        #a5{
-            color: #0abbef;
-        }
-        #a6{
-            color: blue;;
-        }
-        #a7{
-            color: purple;
-        }
-        #a{
-            background: red;
-        }
-        #b{
-            background: orange;
-        }
-        #c{
-            background: yellow;
-        }
-        #d{
-            background: green;
-        }
-        #e{
-            background: #0abbef;
-        }
-        #f{
-            background: blue;
-        }
-        #g{
-            background: purple;
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #555, #444);
         }
     </style>
 </head>
 <body>
-<div class="a2">
-<h1>
-    <span id="a1">d</span>
-    <span id="a2">q</span>
-    <span id="a3">s</span>
-    <span id="a4">的</span>
-    <span id="a5">小</span>
-    <span id="a6">网</span>
-    <span id="a7">站</span>
-</h1></div>
-<div class="a3">
-    <p><a href="aaa.html">烟花</a></p>
-</div>
+    <h1>小小炫酷网站</h1>
+    <div class="button-container">
+        <a href="aaa.html" class="button">烟花</a>
+        <a href="gyc.html" class="button">远古网页</a>
+        <a href="colorfulegg.html" class="button">跨年</a>
+        <a href="sb.html" class="button">帅</a>
+        <a href="29.html" class="button">29帅照</a>
+        <a href="kh.html" class="button">good tool</a>
+        <a href="13.html" class="button">我就想装13</a>
+        <a href="tcs.html" class="button">贪吃蛇</a>
+        <a href="cdr.html" class="button">吃豆人</a>
+        <a href="https://www.croxy.network/_zh/" class="button">点我开始科学上网</a>
+    </div>
 
-<div class="a4">
-    <p><a href="gyc.html">远古网页</a></p>
-</div>
-<div class="a5">
-    <p><a href="colorfulegg.html">跨年</a></p>
-</div>
-    <h1>cmd查看wifi密码！！！：netsh wlan show profile name="连接名" key=clear</h1>
-<p><a href="sb.html">帅</a></p>
-    <p><a href="29.html">29帅照</a></p>
-    <h1><a href="kh.html">good tool</a><h1>
-    <h1><a href="13.html">我就想装13<a href="https://blog.csdn.net/hfhfekjf/article/details/128444025?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-1-128444025-blog-128826181.235^v43^pc_blog_bottom_relevance_base2&spm=1001.2101.3001.4242.2&utm_relevant_index=4">原作者</h1>
-    <h1><a href="tcs.html">贪吃蛇</a><h1>
-    <h1><a href="cdr.html">吃豆人</a><h1>
-    <h1><a href="https://www.croxy.network/_zh/">点我开始科学上网</a><h1>
+    <script>
+        function changeBackgroundColor() {
+            const colors = ['#333', '#444', '#555', '#666', '#777'];
+            let index = 0;
 
+            function updateColor() {
+                document.body.style.background = colors[index];
+                index = (index + 1) % colors.length;
+            }
+
+            setInterval(updateColor, 2000);
+        }
+
+        window.addEventListener('load', changeBackgroundColor);
+
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('mouseover', function() {
+                this.style.transform = 'scale(1.1)';
+            });
+            button.addEventListener('mouseout', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelector(this.getAttribute('href')).scrollIntoView({
+      behavior: 'smooth'
+    });
+  });
+});
+
+    </script>
+    <img alt="ip签名图片" src="https://www.ipip5.com/myip">
+    <link rel="shortcut icon" href="rainbow.ico"/>
+    <img alt="ip签名图片" src="https://www.ipip5.com/ipimg">
 </body>
+</html>
