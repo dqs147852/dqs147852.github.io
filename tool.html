@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>fjy</title>
+    <style>
+        body {
+            background: #333;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 30px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background: linear-gradient(to right, #333, #222);
+            color: white;
+            text-decoration: none;
+            border: 1px solid #f7b733;
+            border-radius: 25px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
+        }
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #555, #444);
+        }
+    </style>
+</head>
+<body>
+    <h1>小杜的网站</h1>
+    <div class="button-container">
+        <a href="https://github.com/imengyu/JiYuTrainer/blob/master/" class="button">反控制1号</a>
+        <a href="https://github.com/imengyu/JiYuTrainer/blob/master/%E5%B8%AE%E5%8A%A9.png" class="button">反控制1号使用方法</a>
+        <a href="fjy.exe" class="button">反控制2号</a>
+    </div>
+
+    <script>
+        function changeBackgroundColor() {
+            const colors = ['#333', '#444', '#555', '#666', '#777'];
+            let index = 0;
+
+            function updateColor() {
+                document.body.style.background = colors[index];
+                index = (index + 1) % colors.length;
+            }
+
+            setInterval(updateColor, 2000);
+        }
+
+        window.addEventListener('load', changeBackgroundColor);
+
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('mouseover', function() {
+                this.style.transform = 'scale(1.1)';
+            });
+            button.addEventListener('mouseout', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelector(this.getAttribute('href')).scrollIntoView({
+      behavior: 'smooth'
+    });
+  });
+});
+
+    </script>
+
+</body>
+</html>
