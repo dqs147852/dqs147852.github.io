@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进制转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .converter-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-group, .output-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        select {
+            width: 28%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-left: 2%;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output-group input {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>进制转换器</h1>
+    <div class="converter-container">
+        <div class="input-group">
+            <label for="inputValue">输入数字:</label>
+            <input type="text" id="inputValue" placeholder="请输入数字">
+            <select id="inputBase">
+                <option value="2">二进制 (2)</option>
+                <option value="8">八进制 (8)</option>
+                <option value="10" selected>十进制 (10)</option>
+                <option value="16">十六进制 (16)</option>
+            </select>
+        </div>
+        
+        <div class="output-group">
+            <label for="outputValue">输出结果:</label>
+            <input type="text" id="outputValue" readonly>
+            <select id="outputBase">
+                <option value="2">二进制 (2)</option>
+                <option value="8">八进制 (8)</option>
+                <option value="10">十进制 (10)</option>
+                <option value="16" selected>十六进制 (16)</option>
+            </select>
+        </div>
+        
+        <button id="convertBtn">转换</button>
+    </div>
+
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const inputValue = document.getElementById('inputValue').value.trim();
+            const inputBase = parseInt(document.getElementById('inputBase').value);
+            const outputBase = parseInt(document.getElementById('outputBase').value);
+            
+            if (!inputValue) {
+                alert('请输入要转换的数字');
+                return;
+            }
+            
+            try {
+                // 将输入转换为十进制
+                let decimalValue;
+                if (inputBase === 16) {
+                    decimalValue = parseInt(inputValue, 16);
+                } else if (inputBase === 10) {
+                    decimalValue = parseInt(inputValue, 10);
+                } else if (inputBase === 8) {
+                    decimalValue = parseInt(inputValue, 8);
+                } else if (inputBase === 2) {
+                    decimalValue = parseInt(inputValue, 2);
+                } else {
+                    throw new Error('不支持的输入进制');
+                }
+                
+                if (isNaN(decimalValue)) {
+                    throw new Error('输入的数字与选择的进制不匹配');
+                }
+                
+                // 转换为目标进制
+                let result;
+                if (outputBase === 16) {
+                    result = decimalValue.toString(16).toUpperCase();
+                } else if (outputBase === 10) {
+                    result = decimalValue.toString(10);
+                } else if (outputBase === 8) {
+                    result = decimalValue.toString(8);
+                } else if (outputBase === 2) {
+                    result = decimalValue.toString(2);
+                } else {
+                    throw new Error('不支持的输出进制');
+                }
+                
+                document.getElementById('outputValue').value = result;
+                
+            } catch (error) {
+                alert('错误: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
