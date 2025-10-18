@@ -3,61 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>《梦游天姥吟留别》深度解析</title>
+    <title>李白《梦游天姥吟留别》深度解析</title>
     <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "楷体", "STKaiti", "SimSun", serif;
+        }
+        
         body {
-            font-family: "宋体", "SimSun", serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
+            background: linear-gradient(to bottom, #f8f5f0, #e6f3ff, #f0f0f0);
             color: #333;
+            line-height: 1.8;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        h1, h2, h3, h4 {
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        h1 {
+        
+        /* 标题样式 */
+        .page-header {
             text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #8b0000, #5d4037, #004d40);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        
+        .page-header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(to right, #8b0000, #5d4037, #004d40);
+            border-radius: 2px;
+        }
+        
+        /* 章节样式 */
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
+        }
+        
+        /* 第一部分 - 创作背景 */
+        .creation-background {
+            background: linear-gradient(to right, #f8f5f0, #fff);
+            border-left: 5px solid #d6c4a8;
+        }
+        
+        .creation-background .section-title {
+            color: #5d4037;
+            border-bottom-color: #d6c4a8;
+        }
+        
+        /* 第二部分 - 诗歌结构 */
+        .poem-structure {
+            background: linear-gradient(to right, #e6f3ff, #fff0f5);
+            border-left: 5px solid #9370db;
+        }
+        
+        .poem-structure .section-title {
+            color: #004d40;
+            border-bottom-color: #9370db;
+        }
+        
+        /* 第三部分 - 艺术特色 */
+        .artistic-features {
+            background: linear-gradient(to right, #fff0f5, #fffacd);
+            border-left: 5px solid #da70d6;
+        }
+        
+        .artistic-features .section-title {
+            color: #8b008b;
+            border-bottom-color: #da70d6;
+        }
+        
+        /* 第四部分 - 重点问题 */
+        .key-issues {
+            background: linear-gradient(to right, #f0f0f0, #fff);
+            border-left: 5px solid #2f4f4f;
+        }
+        
+        .key-issues .section-title {
+            color: #2f4f4f;
+            border-bottom-color: #2f4f4f;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* 强调文本 */
+        strong {
             color: #8b0000;
         }
-        table {
+        
+        /* 诗歌内容样式 */
+        .poem-content {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            line-height: 2.2;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .highlight-verse {
+            background-color: #fffacd;
+            color: #5d4037;
+            border-left: 3px solid #ffd700;
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* 表格样式 */
+        .analysis-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px 12px;
+        
+        .analysis-table th {
+            background-color: #5d4037;
+            color: white;
+            padding: 12px 15px;
             text-align: left;
         }
-        th {
-            background-color: #f2f2f2;
+        
+        .analysis-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
         }
-        ul, ol {
-            padding-left: 20px;
+        
+        .analysis-table tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
-        .citation {
-            font-size: 0.9em;
-            color: #666;
-            font-style: italic;
+        
+        .analysis-table tr:hover {
+            background-color: #f1f1f1;
         }
-        .section {
-            margin-bottom: 30px;
+        
+        /* 色彩标记 */
+        .color-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.9rem;
+            margin: 0 5px;
         }
-        .highlight {
-            background-color: #fffacd;
-            padding: 2px 4px;
-            border-radius: 3px;
+        
+        .color-reality { background-color: #8b4513; }
+        .color-moon { background-color: #4a90d6; }
+        .color-day { background-color: #ffd700; color: #333; }
+        .color-night { background-color: #9370db; }
+        .color-fairy { background-color: #da70d6; }
+        .color-awake { background-color: #2f4f4f; }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .poem-content {
+                font-size: 1rem;
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>《梦游天姥吟留别》深度解析</h1>
+    <header class="page-header">
+        <h1>李白《梦游天姥吟留别》深度解析</h1>
+        <p>浪漫主义诗篇的美学色彩与情感表达</p>
+    </header>
     
-    <div class="section">
-        <h2>一、创作背景与文学常识</h2>
+    <section class="section creation-background">
+        <h2 class="section-title">一、创作背景与文学常识</h2>
         
         <h3>作者简介</h3>
         <p><strong>李白（701-762）</strong></p>
@@ -97,10 +271,16 @@
             <li>发展：魏晋时期郭璞的游仙诗</li>
             <li>创新：李白将游仙与抒情完美结合</li>
         </ul>
-    </div>
+        
+        <div class="highlight-verse">
+            <p>了解这首诗的创作背景，是理解其情感基调的钥匙。</p>
+            <p><strong>政治理想的破灭</strong>：李白胸怀"安世济民"、"功成身退"的抱负。天宝元年（742年），他受召入京，却仅被任命为翰林侍诏，无法施展政治才能。加之他蔑视权贵的性格（如命高力士脱靴），招致排挤，天宝三载（744年）便被唐玄宗"赐金放还"。</p>
+            <p><strong>诗以言志，借梦抒怀</strong>：此诗作于李白离开长安后，南游吴越之前，赠别东鲁友人之时。题目中的"吟"是一种古诗体，适于抒发情感；"留别"点明赠别主题；"梦游"则暗示内容的虚幻性。诗人借梦中畅游天姥山，以及梦境的美好与幻灭，表达对现实的不满和对自由理想的追求。</p>
+        </div>
+    </section>
     
-    <div class="section">
-        <h2>二、诗歌结构与内容深度分析</h2>
+    <section class="section poem-structure">
+        <h2 class="section-title">二、诗歌结构与内容深度分析</h2>
         
         <h3>整体结构</h3>
         <p><code>梦前（起）→ 梦中（承转）→ 梦后（合） 向往 → 游历 → 感悟</code></p>
@@ -190,10 +370,52 @@
                 </ul>
             </li>
         </ol>
-    </div>
+        
+        <h3>诗歌结构与梦境解析</h3>
+        <p>全诗以"梦游"为线索，情感随景变幻，结构清晰，大致可分为三个部分。下表详细解析了梦游的历程：</p>
+        
+        <table class="analysis-table">
+            <thead>
+                <tr>
+                    <th>结构部分</th>
+                    <th>核心内容与情感脉络</th>
+                    <th>诗句例证与细节分析</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>梦前 (入梦之由)</strong></td>
+                    <td>描绘天姥山的雄伟神奇，引发神游之念。</td>
+                    <td>以"瀛洲"陪衬"天姥"，以"五岳"、"赤城"、"天台"进一步烘托其高峻，运用了夸张、衬托手法。</td>
+                </tr>
+                <tr>
+                    <td rowspan="4"><strong>梦中 (梦游之旅)</strong></td>
+                    <td><strong>月夜剡溪</strong>：清幽寂静。借谢灵运典故，寄情山水。</td>
+                    <td>"湖月照我影，送我至剡溪"， "谢公宿处今尚在，渌水荡漾清猿啼"。"照"、"送"拟人，显其急切、神往；提及谢公，有追慕先贤之意。</td>
+                </tr>
+                <tr>
+                    <td><strong>白昼登山</strong>：壮美奇绝。心情愉悦沉醉。</td>
+                    <td>"半壁见海日，空中闻天鸡"，山高可见海日，闻天鸡，景象壮丽。"千岩万转路不定，迷花倚石忽已暝"，山路曲折，景色奇美，乐而忘返。</td>
+                </tr>
+                <tr>
+                    <td><strong>夜幕降临</strong>：离奇恐怖。气氛紧张，为仙境出现蓄势。</td>
+                    <td>"熊咆龙吟殷岩泉，栗深林兮惊层巅。云青青兮欲雨，水澹澹兮生烟"。熊咆龙吟使深林战栗，层巅震惊，乌云沉沉，水波生烟，营造出恐怖氛围。</td>
+                </tr>
+                <tr>
+                    <td><strong>仙境洞开</strong>：辉煌壮丽。梦境高潮，象征理想世界。</td>
+                    <td>"列缺霹雳，丘峦崩摧。洞天石扇，訇然中开"。电闪雷鸣，山崩地裂，气势惊人。"霓为衣兮风为马，云之君兮纷纷而来下。虎鼓瑟兮鸾回车，仙之人兮列如麻"。仙人纷至沓来，场面盛大辉煌。</td>
+                </tr>
+                <tr>
+                    <td><strong>梦后 (感慨抒怀)</strong></td>
+                    <td>梦醒怅惘，点明主旨，抒发对现实的愤懑和决绝态度。</td>
+                    <td>1."忽魂悸以魄动，恍惊起而长嗟。惟觉时之枕席，失向来之烟霞"，表达梦醒后的失落。2."世间行乐亦如此，古来万事东流水"，流露出人生无常的感慨。3."<strong>安能摧眉折腰事权贵，使我不得开心颜！</strong>"是全文的最强音，直抒胸臆，点明全诗主题：蔑视权贵，傲岸不屈。</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
     
-    <div class="section">
-        <h2>四、艺术特色与表现手法</h2>
+    <section class="section artistic-features">
+        <h2 class="section-title">四、艺术特色与表现手法</h2>
         
         <h3>浪漫主义特征</h3>
         <p><strong>想象特色</strong></p>
@@ -212,106 +434,51 @@
         
         <h3>语言艺术</h3>
         <p><strong>句式变化</strong></p>
-        <table>
-            <tr>
-                <th>句式类型</th>
-                <th>例句</th>
-                <th>语言特点</th>
-            </tr>
-            <tr>
-                <td>四言</td>
-                <td>列缺霹雳，丘峦崩摧</td>
-                <td>简洁有力</td>
-            </tr>
-            <tr>
-                <td>五言</td>
-                <td>湖月照我影，送我至剡溪</td>
-                <td>明快流畅</td>
-            </tr>
-            <tr>
-                <td>七言</td>
-                <td>云青青兮欲雨，水澹澹兮生烟</td>
-                <td>婉转悠长</td>
-            </tr>
-            <tr>
-                <td>九言</td>
-                <td>霓为衣兮风为马</td>
-                <td>气势磅礴</td>
-            </tr>
-        </table>
+        <ul>
+            <li>四言：列缺霹雳，丘峦崩摧（简洁有力）</li>
+            <li>五言：湖月照我影，送我至剡溪（明快流畅）</li>
+            <li>七言：云青青兮欲雨，水澹澹兮生烟（婉转悠长）</li>
+            <li>九言：霓为衣兮风为马（气势磅礴）</li>
+        </ul>
         
         <h3>艺术特色与浪漫风格</h3>
         <p>李白在这首诗中将其浪漫主义风格发挥得淋漓尽致，主要体现在以下几个方面：</p>
         
-        <table>
-            <tr>
-                <th>艺术手法</th>
-                <th>具体体现</th>
-                <th>诗句例证与效果分析</th>
-            </tr>
-            <tr>
-                <td><strong>奇幻的想象</strong></td>
-                <td>诗人构筑了一个从现实到梦境，再到仙境，最终回归现实的奇幻旅程。</td>
-                <td>"我欲因之梦吴越，一夜飞度镜湖月"，一个"飞"字打破了时空限制，展现了梦游的飘逸。"霓为衣兮风为马，云之君兮纷纷而来下"，将仙人出场描绘得光彩夺目，富丽堂皇。</td>
-            </tr>
-            <tr>
-                <td><strong>极度的夸张</strong></td>
-                <td>运用夸张突出天姥山的高大雄伟，营造震撼效果。</td>
-                <td>"天姥连天向天横，势拔五岳掩赤城"。通过与五岳、赤城山对比，甚至说天台山"对此欲倒东南倾"，极言天姥山的磅礴气势。</td>
-            </tr>
-            <tr>
-                <td><strong>巧妙的对比</strong></td>
-                <td>多处运用对比，深化诗歌主题。</td>
-                <td>开篇以虚无缥缈的<strong>瀛洲</strong>衬托<strong>天姥山</strong>的真实可睹。梦中仙境的<strong>美好</strong>与现实世界的<strong>丑恶</strong>形成强烈对比。</td>
-            </tr>
-            <tr>
-                <td><strong>灵活的语言</strong></td>
-                <td>句式长短错落，节奏多变，自由奔放。</td>
-                <td>诗中杂用四言、五言、六言、七言、九言，如"列缺霹雳，丘峦崩摧"的短促有力，与"云之君兮纷纷而来下"的舒展悠长，适应了情感起伏的变化。</td>
-            </tr>
+        <table class="analysis-table">
+            <thead>
+                <tr>
+                    <th>艺术手法</th>
+                    <th>具体体现</th>
+                    <th>诗句例证与效果分析</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>奇幻的想象</strong></td>
+                    <td>诗人构筑了一个从现实到梦境，再到仙境，最终回归现实的奇幻旅程。</td>
+                    <td>"我欲因之梦吴越，一夜飞度镜湖月"，一个"飞"字打破了时空限制，展现了梦游的飘逸。"霓为衣兮风为马，云之君兮纷纷而来下"，将仙人出场描绘得光彩夺目，富丽堂皇。</td>
+                </tr>
+                <tr>
+                    <td><strong>极度的夸张</strong></td>
+                    <td>运用夸张突出天姥山的高大雄伟，营造震撼效果。</td>
+                    <td>"天姥连天向天横，势拔五岳掩赤城"。通过与五岳、赤城山对比，甚至说天台山"对此欲倒东南倾"，极言天姥山的磅礴气势。</td>
+                </tr>
+                <tr>
+                    <td><strong>巧妙的对比</strong></td>
+                    <td>多处运用对比，深化诗歌主题。</td>
+                    <td>开篇以虚无缥缈的<strong>瀛洲</strong>衬托<strong>天姥山</strong>的真实可睹。梦中仙境的<strong>美好</strong>与现实世界的<strong>丑恶</strong>形成强烈对比。</td>
+                </tr>
+                <tr>
+                    <td><strong>灵活的语言</strong></td>
+                    <td>句式长短错落，节奏多变，自由奔放。</td>
+                    <td>诗中杂用四言、五言、六言、七言、九言，如"列缺霹雳，丘峦崩摧"的短促有力，与"云之君兮纷纷而来下"的舒展悠长，适应了情感起伏的变化。</td>
+                </tr>
+            </tbody>
         </table>
-        
-        <h3>诗歌结构与梦境解析</h3>
-        <p>全诗以"梦游"为线索，情感随景变幻，结构清晰，大致可分为三个部分。下表详细解析了梦游的历程：</p>
-        
-        <table>
-            <tr>
-                <th>结构部分</th>
-                <th>核心内容与情感脉络</th>
-                <th>诗句例证与细节分析</th>
-            </tr>
-            <tr>
-                <td><strong>梦前 (入梦之由)</strong></td>
-                <td>描绘天姥山的雄伟神奇，引发神游之念。</td>
-                <td>以"瀛洲"陪衬"天姥"，以"五岳"、"赤城"、"天台"进一步烘托其高峻，运用了夸张、衬托手法。</td>
-            </tr>
-            <tr>
-                <td rowspan="4"><strong>梦中 (梦游之旅)</strong></td>
-                <td><strong>月夜剡溪</strong>：清幽寂静。借谢灵运典故，寄情山水。</td>
-                <td>"湖月照我影，送我至剡溪"，"谢公宿处今尚在，渌水荡漾清猿啼"。"照"、"送"拟人，显其急切、神往；提及谢公，有追慕先贤之意。</td>
-            </tr>
-            <tr>
-                <td><strong>白昼登山</strong>：壮美奇绝。心情愉悦沉醉。</td>
-                <td>"半壁见海日，空中闻天鸡"，山高可见海日，闻天鸡，景象壮丽。"千岩万转路不定，迷花倚石忽已暝"，山路曲折，景色奇美，乐而忘返。</td>
-            </tr>
-            <tr>
-                <td><strong>夜幕降临</strong>：离奇恐怖。气氛紧张，为仙境出现蓄势。</td>
-                <td>"熊咆龙吟殷岩泉，栗深林兮惊层巅。云青青兮欲雨，水澹澹兮生烟"。熊咆龙吟使深林战栗，层巅震惊，乌云沉沉，水波生烟，营造出恐怖氛围。</td>
-            </tr>
-            <tr>
-                <td><strong>仙境洞开</strong>：辉煌壮丽。梦境高潮，象征理想世界。</td>
-                <td>"列缺霹雳，丘峦崩摧。洞天石扇，訇然中开"。电闪雷鸣，山崩地裂，气势惊人。"霓为衣兮风为马，云之君兮纷纷而来下。虎鼓瑟兮鸾回车，仙之人兮列如麻"。仙人纷至沓来，场面盛大辉煌。</td>
-            </tr>
-            <tr>
-                <td><strong>梦后 (感慨抒怀)</strong></td>
-                <td>梦醒怅惘，点明主旨，抒发对现实的愤懑和决绝态度。</td>
-                <td>1."忽魂悸以魄动，恍惊起而长嗟。惟觉时之枕席，失向来之烟霞"，表达梦醒后的失落。<br>2."世间行乐亦如此，古来万事东流水"，流露出人生无常的感慨。<br>3."<strong>安能摧眉折腰事权贵，使我不得开心颜！</strong>"是全文的最强音，直抒胸臆，点明全诗主题：蔑视权贵，傲岸不屈。</td>
-            </tr>
-        </table>
-    </div>
+    </section>
     
-    <div class="section">
-        <h2>五、重点问题深度解析</h2>
+    <section class="section key-issues">
+        <h2 class="section-title">五、重点问题深度解析</h2>
         
         <h3>主题思想探究</h3>
         <p><strong>多层内涵</strong></p>
@@ -357,10 +524,8 @@
             <li>现状：被迫归隐</li>
             <li>态度：傲然独立</li>
         </ul>
-    </div>
-    
-    <div class="section">
-        <h2>六、习题与答案解析</h2>
+        
+        <h2 class="section-title">六、习题与答案解析</h2>
         
         <h3>理解性默写</h3>
         <ol>
@@ -384,10 +549,11 @@
         
         <p><strong>2. 分析语言特色</strong></p>
         <p>参考答案：语言夸张奔放，想象神奇丰富，句式长短错落，韵律自由多变，善于运用神话传说和历史典故，形成了雄奇飘逸的独特风格。</p>
-    </div>
+    </section>
     
-    <div class="citation">
-        <p>注：本解析基于李白《梦游天姥吟留别》及相关学术研究整理。</p>
-    </div>
+    <footer style="text-align: center; margin-top: 50px; padding: 20px; border-top: 1px solid #ddd; color: #666;">
+        <p>李白《梦游天姥吟留别》深度解析 | 展现唐诗浪漫主义美学色彩</p>
+        <p>设计理念：通过色彩变化反映诗歌情感起伏与意境转换</p>
+    </footer>
 </body>
 </html>
