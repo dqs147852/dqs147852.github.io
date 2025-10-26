@@ -1,6 +1,6 @@
 import subprocess
 import re
-
+import time
 def get_ip_addresses():
     """获取本机的IPv4和IPv6地址（兼容Python 3.6，解决编码问题）"""
     try:
