@@ -1,0 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	freopen("erha.in", "r", stdin);
+	freopen("erha.out", "w", stdout);
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	return 0;
+}
