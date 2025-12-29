@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高中课堂 - 你画我猜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .left-panel {
+            flex: 2;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .right-panel {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .game-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+        
+        .word-display {
+            font-size: 1.8rem;
+            letter-spacing: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #2a5298;
+            min-height: 50px;
+        }
+        
+        .timer {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #ff4757;
+            font-weight: bold;
+        }
+        
+        .canvas-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        #drawing-canvas {
+            display: block;
+            background: white;
+            cursor: crosshair;
+            width: 100%;
+            height: 400px;
+        }
+        
+        /* 紧凑的选词面板 */
+        .word-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            width: 180px;
+            font-size: 0.85rem;
+            border: 2px solid #2a5298;
+            display: none;
+        }
+        
+        .word-panel h3 {
+            margin-bottom: 8px;
+            color: #2a5298;
+            font-size: 1rem;
+        }
+        
+        .word-choices-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .word-choice-compact {
+            padding: 8px 5px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .word-choice-compact:hover {
+            background: #bbdefb;
+            transform: scale(1.03);
+        }
+        
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .tool-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tool-section h3 {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .color {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .color:hover {
+            transform: scale(1.1);
+        }
+        
+        .color.active {
+            border: 2px solid #333;
+            transform: scale(1.1);
+        }
+        
+        .size-picker {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .size-btn {
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9ecef;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+        
+        .size-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            background: #2a5298;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        button:hover {
+            background: #1e3c72;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .game-status {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-status h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .controls-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .controls-container h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .word-panel {
+                position: relative;
+                top: auto;
+                right: auto;
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 高中课堂 - 你画我猜 🎨</h1>
+            <p>老师绘画，学生猜词 - 专为高中课堂设计的互动游戏！</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="left-panel">
+                <div class="game-info">
+                    <div id="game-status">点击"开始游戏"选择词语</div>
+                    <div id="word-display" class="word-display">_ _ _ _</div>
+                    <div id="timer" class="timer">60秒</div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="drawing-canvas"></canvas>
+                    <!-- 紧凑的选词面板 -->
+                    <div class="word-panel" id="word-panel">
+                        <h3>选择词语</h3>
+                        <div class="word-choices-compact" id="word-choices-compact">
+                            <!-- 词语选项将动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tools">
+                    <div class="tool-section">
+                        <h3>画笔颜色</h3>
+                        <div class="color-picker">
+                            <div class="color active" style="background-color: black;" data-color="black"></div>
+                            <div class="color" style="background-color: red;" data-color="red"></div>
+                            <div class="color" style="background-color: green;" data-color="green"></div>
+                            <div class="color" style="background-color: blue;" data-color="blue"></div>
+                            <div class="color" style="background-color: orange;" data-color="orange"></div>
+                            <div class="color" style="background-color: purple;" data-color="purple"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-section">
+                        <h3>画笔大小</h3>
+                        <div class="size-picker">
+                            <div class="size-btn active" data-size="2">细</div>
+                            <div class="size-btn" data-size="5">中</div>
+                            <div class="size-btn" data-size="10">粗</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-section">
+                        <h3>画布操作</h3>
+                        <div class="action-buttons">
+                            <button id="clear-btn">清空画布</button>
+                            <button id="eraser-btn">橡皮擦</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="game-status">
+                    <h3>游戏状态</h3>
+                    <div class="status-item">
+                        <span>当前回合:</span>
+                        <span id="round-counter">1</span>
+                    </div>
+                    <div class="status-item">
+                        <span>已猜词语:</span>
+                        <span id="guessed-words">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span>最佳时间:</span>
+                        <span id="best-time">--</span>
+                    </div>
+                </div>
+                
+                <div class="controls-container">
+                    <h3>游戏控制</h3>
+                    <div class="action-buttons">
+                        <button id="start-game-btn">开始游戏</button>
+                        <button id="reset-game-btn">重新开始</button>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button id="show-answer-btn">显示答案</button>
+                        <button id="next-word-btn" style="margin-top: 10px; display: none;">下一个词语</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏常量与变量
+        const GAME_STATES = {
+            WAITING: 'waiting',
+            CHOOSING: 'choosing',
+            DRAWING: 'drawing',
+            ROUND_END: 'roundEnd'
+        };
+        
+        const ROUND_TIME = 60;
+        
+        // 游戏变量
+        let canvas, ctx;
+        let isDrawing = false;
+        let currentColor = 'black';
+        let currentSize = 2;
+        let currentX = 0;
+        let currentY = 0;
+        let gameState = GAME_STATES.WAITING;
+        let currentWord = '';
+        let timeLeft = ROUND_TIME;
+        let timerInterval = null;
+        let roundCounter = 1;
+        let guessedWords = 0;
+        let bestTime = null;
+        
+        // 高中版词库（包含学科知识、成语等）[1,2,6](@ref)
+        const wordList = [
+            // 学科相关
+            '物理', '化学', '生物', '历史', '地理', '数学', '语文', '英语', '政治',
+            '三角函数', '二次函数', '元素周期表', '牛顿定律', '化学反应', '细胞分裂',
+            '世界大战', '地球公转', '文言文', '定语从句', '民主政治',
+            
+            // 成语典故
+            '画蛇添足', '掩耳盗铃', '守株待兔', '亡羊补牢', '对牛弹琴', '狐假虎威',
+            '望梅止渴', '破釜沉舟', '卧薪尝胆', '指鹿为马', '胸有成竹', '水滴石穿',
+            '悬梁刺股', '凿壁偷光', '闻鸡起舞', '纸上谈兵', '三顾茅庐', '四面楚歌',
+            
+            // 文学名著
+            '红楼梦', '西游记', '水浒传', '三国演义', '鲁迅', '李白', '杜甫',
+            '莎士比亚', '哈姆雷特', '罗密欧与朱丽叶',
+            
+            // 历史人物与事件
+            '秦始皇', '汉武帝', '唐太宗', '岳飞', '郑和下西洋', '辛亥革命',
+            '五四运动', '改革开放', '爱因斯坦', '拿破仑', '哥伦布',
+            
+            // 科学概念
+            '光合作用', '重力加速度', '相对论', '基因突变', '生态系统', '板块构造',
+            '电磁感应', '量子力学', '微生物', '进化论', '大数据', '人工智能',
+            
+            // 日常物品与动作
+            '篮球', '足球', '乒乓球', '跑步', '游泳', '自行车', '手机', '电脑',
+            '图书馆', '实验室', '黑板', '粉笔', '考试', '复习', '实验', '演讲'
+        ];
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeUI();
+            setupEventListeners();
+        });
+        
+        // 初始化UI元素
+        function initializeUI() {
+            canvas = document.getElementById('drawing-canvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置Canvas的实际尺寸
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = 400;
+            
+            // 设置线条样式
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // 清空画布
+            clearCanvas();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 绘画相关事件
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // 触摸设备支持
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+            
+            // 颜色选择器事件
+            document.querySelectorAll('.color').forEach(colorEl => {
+                colorEl.addEventListener('click', function() {
+                    document.querySelectorAll('.color').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    currentColor = this.getAttribute('data-color');
+                    // 选择颜色后退出橡皮擦模式
+                    document.getElementById('eraser-btn').textContent = '橡皮擦';
+                });
+            });
+            
+            // 画笔大小选择事件
+            document.querySelectorAll('.size-btn').forEach(sizeEl => {
+                sizeEl.addEventListener('click', function() {
+                    document.querySelectorAll('.size-btn').forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSize = parseInt(this.getAttribute('data-size'));
+                });
+            });
+            
+            // 按钮事件
+            document.getElementById('clear-btn').addEventListener('click', clearCanvas);
+            document.getElementById('eraser-btn').addEventListener('click', toggleEraser);
+            document.getElementById('start-game-btn').addEventListener('click', startGame);
+            document.getElementById('reset-game-btn').addEventListener('click', resetGame);
+            document.getElementById('show-answer-btn').addEventListener('click', showAnswer);
+            document.getElementById('next-word-btn').addEventListener('click', nextWord);
+        }
+        
+        // 绘画功能
+        function startDrawing(e) {
+            if (gameState !== GAME_STATES.DRAWING) return;
+            
+            isDrawing = true;
+            const pos = getMousePos(canvas, e);
+            [currentX, currentY] = [pos.x, pos.y];
+            
+            ctx.beginPath();
+            ctx.moveTo(currentX, currentY);
+        }
+        
+        function draw(e) {
+            if (!isDrawing || gameState !== GAME_STATES.DRAWING) return;
+            
+            const pos = getMousePos(canvas, e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentSize;
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            ctx.closePath();
+        }
+        
+        // 触摸事件处理
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        // 获取鼠标位置
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+            
+            if (evt.type.includes('touch')) {
+                clientX = evt.touches[0].clientX;
+                clientY = evt.touches[0].clientY;
+            } else {
+                clientX = evt.clientX;
+                clientY = evt.clientY;
+            }
+            
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+        
+        // 画布操作
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function toggleEraser() {
+            const eraserBtn = document.getElementById('eraser-btn');
+            if (currentColor !== 'white') {
+                // 进入橡皮擦模式
+                currentColor = 'white';
+                eraserBtn.textContent = '画笔';
+            } else {
+                // 退出橡皮擦模式，恢复黑色
+                currentColor = 'black';
+                document.querySelector('.color[data-color="black"]').classList.add('active');
+                eraserBtn.textContent = '橡皮擦';
+            }
+        }
+        
+        // 游戏逻辑
+        function startGame() {
+            if (gameState === GAME_STATES.DRAWING) return;
+            
+            // 重置游戏状态
+            resetGame();
+            
+            // 显示选词面板
+            showWordChoices();
+        }
+        
+        function showWordChoices() {
+            const wordPanel = document.getElementById('word-panel');
+            const wordChoicesContainer = document.getElementById('word-choices-compact');
+            
+            // 清空之前的选项
+            wordChoicesContainer.innerHTML = '';
+            
+            // 随机选择3个词语
+            const shuffledWords = [...wordList].sort(() => 0.5 - Math.random());
+            const selectedWords = shuffledWords.slice(0, 3);
+            
+            // 创建词语选项
+            selectedWords.forEach(word => {
+                const wordChoice = document.createElement('div');
+                wordChoice.className = 'word-choice-compact';
+                wordChoice.textContent = word;
+                wordChoice.addEventListener('click', function() {
+                    selectWord(word);
+                    wordPanel.style.display = 'none';
+                });
+                wordChoicesContainer.appendChild(wordChoice);
+            });
+            
+            wordPanel.style.display = 'block';
+            gameState = GAME_STATES.CHOOSING;
+            document.getElementById('game-status').textContent = '请选择要画的词语';
+        }
+        
+        function selectWord(word) {
+            currentWord = word;
+            gameState = GAME_STATES.DRAWING;
+            
+            // 更新游戏状态显示
+            document.getElementById('game-status').textContent = '正在绘画中...';
+            document.getElementById('word-display').textContent = '_ '.repeat(word.length);
+            
+            // 开始倒计时
+            startTimer();
+            
+            // 显示下一个词语按钮
+            document.getElementById('next-word-btn').style.display = 'block';
+        }
+        
+        function startTimer() {
+            timeLeft = ROUND_TIME;
+            document.getElementById('timer').textContent = `${timeLeft}秒`;
+            
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = `${timeLeft}秒`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endRound(false);
+                }
+            }, 1000);
+        }
+        
+        function endRound(success) {
+            gameState = GAME_STATES.ROUND_END;
+            clearInterval(timerInterval);
+            
+            if (success) {
+                document.getElementById('game-status').textContent = '猜词成功！';
+                guessedWords++;
+                document.getElementById('guessed-words').textContent = guessedWords;
+                
+                // 更新最佳时间
+                const timeUsed = ROUND_TIME - timeLeft;
+                if (!bestTime || timeUsed < bestTime) {
+                    bestTime = timeUsed;
+                    document.getElementById('best-time').textContent = `${bestTime}秒`;
+                }
+            } else {
+                document.getElementById('game-status').textContent = '时间到！';
+            }
+            
+            // 显示正确答案
+            document.getElementById('word-display').textContent = currentWord.split('').join(' ');
+        }
+        
+        function resetGame() {
+            clearCanvas();
+            clearInterval(timerInterval);
+            gameState = GAME_STATES.WAITING;
+            document.getElementById('game-status').textContent = '点击"开始游戏"选择词语';
+            document.getElementById('word-display').textContent = '_ _ _ _';
+            document.getElementById('timer').textContent = '60秒';
+            document.getElementById('word-panel').style.display = 'none';
+            document.getElementById('next-word-btn').style.display = 'none';
+            
+            // 重置游戏统计
+            roundCounter = 1;
+            guessedWords = 0;
+            document.getElementById('round-counter').textContent = roundCounter;
+            document.getElementById('guessed-words').textContent = guessedWords;
+            document.getElementById('best-time').textContent = '--';
+        }
+        
+        function showAnswer() {
+            if (currentWord) {
+                document.getElementById('word-display').textContent = currentWord.split('').join(' ');
+                clearInterval(timerInterval);
+                gameState = GAME_STATES.ROUND_END;
+                document.getElementById('game-status').textContent = '已显示答案';
+            }
+        }
+        
+        function nextWord() {
+            if (gameState !== GAME_STATES.ROUND_END) return;
+            
+            roundCounter++;
+            document.getElementById('round-counter').textContent = roundCounter;
+            
+            // 准备下一个词语
+            clearCanvas();
+            gameState = GAME_STATES.CHOOSING;
+            document.getElementById('word-display').textContent = '_ _ _ _';
+            document.getElementById('timer').textContent = '60秒';
+            document.getElementById('game-status').textContent = '请选择下一个词语';
+            
+            // 显示选词面板
+            showWordChoices();
+        }
+    </script>
+</body>
+</html>
