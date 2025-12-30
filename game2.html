@@ -140,6 +140,10 @@
             border: 3px solid #ffc107;
         }
         
+        .player-card.game-over {
+            border: 3px solid #6c757d;
+        }
+        
         .player-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
@@ -157,7 +161,7 @@
             font-size: 0.9rem;
             font-weight: bold;
             margin-bottom: 10px;
-            display: inline-block;
+            display: none; /* 隐藏角色信息 */
         }
         
         .role-undercover {
@@ -374,6 +378,10 @@
             font-size: 0.8rem;
         }
         
+        .role-revealed .player-role {
+            display: inline-block !important; /* 游戏结束后显示角色 */
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -440,11 +448,11 @@
                         <button class="btn btn-warning" id="hideAllBtn">
                             <i class="fas fa-eye-slash"></i> 隐藏所有玩家词语
                         </button>
-                        <button class="btn btn-warning" id="resetBtn">
-                            <i class="fas fa-redo"></i> 重置游戏
+                        <button class="btn btn-warning" id="endGameBtn">
+                            <i class="fas fa-flag-checkered"></i> 结束游戏并显示身份
                         </button>
-                        <button class="btn btn-danger" id="showWhiteboardBtn">
-                            <i class="fas fa-question-circle"></i> 显示白板玩家提示
+                        <button class="btn btn-danger" id="resetBtn">
+                            <i class="fas fa-redo"></i> 重置游戏
                         </button>
                     </div>
                 </div>
@@ -467,7 +475,7 @@
                     </ul>
                 </li>
             </ul>
-            <p class="note">注意：白板玩家看不到任何词语，需要仔细倾听其他玩家的描述来推理平民词语，然后参与游戏。</p>
+            <p class="note">注意：游戏过程中不显示玩家身份，只显示词语。游戏结束后可点击"结束游戏并显示身份"查看所有玩家角色。</p>
         </div>
         
         <footer>
@@ -487,7 +495,8 @@
             ],
             civilianWord: "",
             undercoverWord: "",
-            gameStarted: false
+            gameStarted: false,
+            gameEnded: false
         };
         
         // 默认词语库
@@ -508,20 +517,22 @@
             
             gameState.players.forEach(player => {
                 const playerCard = document.createElement('div');
-                playerCard.className = `player-card ${player.isActive ? 'active' : ''} ${player.isRevealed ? 'revealed' : ''}`;
+                playerCard.className = `player-card ${player.isActive ? 'active' : ''} ${player.isRevealed ? 'revealed' : ''} ${gameState.gameEnded ? 'game-over role-revealed' : ''}`;
                 playerCard.id = `player-${player.id}`;
                 playerCard.dataset.playerId = player.id;
                 
                 // 添加点击事件监听
                 playerCard.addEventListener('click', () => toggleWordDisplay(player.id));
                 
-                // 角色图标
+                // 角色图标 - 游戏结束后显示特定图标
                 let roleIcon = 'fas fa-user';
-                if (player.role === 'undercover') roleIcon = 'fas fa-user-secret';
-                if (player.role === 'whiteboard') roleIcon = 'fas fa-user-circle';
+                if (gameState.gameEnded) {
+                    if (player.role === 'undercover') roleIcon = 'fas fa-user-secret';
+                    if (player.role === 'whiteboard') roleIcon = 'fas fa-user-circle';
+                }
                 
                 // 角色显示文本
-                let roleText = '未分配';
+                let roleText = '玩家';
                 let roleClass = '';
                 if (player.role === 'civilian') {
                     roleText = '平民';
@@ -556,9 +567,9 @@
                         <i class="${roleIcon}"></i>
                     </div>
                     <div class="player-name">${player.name}</div>
-                    <div class="player-role ${roleClass}">${roleText}</div>
+                    <div class="player-role ${roleClass}">${gameState.gameEnded ? roleText : '玩家'}</div>
                     <div class="player-word ${wordClass}">${wordDisplay}</div>
-                    ${player.word ? `<div class="reveal-hint">${hintText}</div>` : ''}
+                    ${player.word && !gameState.gameEnded ? `<div class="reveal-hint">${hintText}</div>` : ''}
                 `;
                 
                 playersContainer.appendChild(playerCard);
@@ -567,7 +578,7 @@
         
         // 切换词语显示/隐藏
         function toggleWordDisplay(playerId) {
-            if (!gameState.gameStarted) return;
+            if (!gameState.gameStarted || gameState.gameEnded) return;
             
             const player = gameState.players.find(p => p.id === playerId);
             if (!player || !player.word) return;
@@ -579,7 +590,7 @@
             updatePlayerDisplay(playerId);
         }
         
-        // 更新单个玩家卡片显示（不重新生成整个卡片）
+        // 更新单个玩家卡片显示
         function updatePlayerDisplay(playerId) {
             const player = gameState.players.find(p => p.id === playerId);
             if (!player) return;
@@ -606,7 +617,7 @@
             }
             
             // 更新提示文本
-            if (hintElement) {
+            if (hintElement && !gameState.gameEnded) {
                 hintElement.textContent = player.isRevealed ? '点击隐藏' + (player.role === 'whiteboard' ? '提示' : '词语') : 
                                                 '点击显示' + (player.role === 'whiteboard' ? '提示' : '词语');
             }
@@ -657,12 +668,15 @@
                 shuffledPlayers[i].word = gameState.civilianWord;
             }
             
+            // 重置游戏结束状态
+            gameState.gameEnded = false;
+            
             // 更新显示
             initPlayers();
             document.getElementById('currentWord').textContent = "已分配词语，点击玩家卡片查看";
             gameState.gameStarted = true;
             
-            alert("角色和词语已分配完成！请点击玩家卡片查看各自的词语。");
+            alert("角色和词语已分配完成！请点击玩家卡片查看各自的词语。注意：游戏过程中不显示玩家身份。");
         }
         
         // 显示所有玩家词语
@@ -707,29 +721,53 @@
             `;
         }
         
-        // 显示白板玩家提示
-        function showWhiteboardHint() {
+        // 结束游戏并显示所有玩家身份
+        function endGameAndRevealRoles() {
             if (!gameState.gameStarted) {
                 alert("请先分配角色和词语！");
                 return;
             }
             
-            const whiteboardPlayer = gameState.players.find(player => player.role === 'whiteboard');
-            if (!whiteboardPlayer) {
-                alert("未找到白板玩家！");
-                return;
-            }
+            // 设置游戏结束状态
+            gameState.gameEnded = true;
             
+            // 显示所有玩家的词语
+            gameState.players.forEach(player => {
+                player.isRevealed = true;
+            });
+            
+            // 重新初始化玩家卡片以显示角色
+            initPlayers();
+            
+            // 在控制台显示游戏结果
             const wordDisplay = document.getElementById('currentWord');
-            wordDisplay.innerHTML = `
+            let resultHTML = `
                 <div style="text-align: center;">
-                    <h4>白板玩家提示</h4>
-                    <p><strong>${whiteboardPlayer.name}</strong> 是白板玩家</p>
-                    <p>白板玩家看不到任何词语，需要根据其他玩家的描述推理平民词语</p>
-                    <p>平民词语是：<strong style="color: #28a745; font-size: 1.5em;">${gameState.civilianWord}</strong></p>
-                    <p>卧底词语是：<strong style="color: #dc3545; font-size: 1.5em;">${gameState.undercoverWord}</strong></p>
+                    <h4 style="color: #dc3545;">游戏结束！所有玩家身份已公开</h4>
+                    <div style="text-align: left; margin-top: 10px; line-height: 1.6;">
+            `;
+            
+            gameState.players.forEach(player => {
+                let roleText = '';
+                if (player.role === 'civilian') roleText = '<span style="color: #28a745;">平民</span>';
+                else if (player.role === 'undercover') roleText = '<span style="color: #dc3545;">卧底</span>';
+                else if (player.role === 'whiteboard') roleText = '<span style="color: #6c757d;">白板</span>';
+                
+                resultHTML += `<div><strong>${player.name}</strong>: ${roleText} - 词语: <strong>${player.role === 'whiteboard' ? '无（需要推理平民词语）' : player.word}</strong></div>`;
+            });
+            
+            resultHTML += `
+                    </div>
+                    <div style="margin-top: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+                        平民词语: <strong style="color: #28a745;">${gameState.civilianWord}</strong><br>
+                        卧底词语: <strong style="color: #dc3545;">${gameState.undercoverWord}</strong>
+                    </div>
                 </div>
             `;
+            
+            wordDisplay.innerHTML = resultHTML;
+            
+            alert("游戏结束！所有玩家身份已公开。");
         }
         
         // 重置游戏
@@ -744,6 +782,7 @@
             gameState.civilianWord = '';
             gameState.undercoverWord = '';
             gameState.gameStarted = false;
+            gameState.gameEnded = false;
             
             document.getElementById('civilianWord').value = '';
             document.getElementById('undercoverWord').value = '';
@@ -756,8 +795,8 @@
         document.getElementById('assignBtn').addEventListener('click', assignRolesAndWords);
         document.getElementById('revealAllBtn').addEventListener('click', revealAllWords);
         document.getElementById('hideAllBtn').addEventListener('click', hideAllWords);
+        document.getElementById('endGameBtn').addEventListener('click', endGameAndRevealRoles);
         document.getElementById('resetBtn').addEventListener('click', resetGame);
-        document.getElementById('showWhiteboardBtn').addEventListener('click', showWhiteboardHint);
         
         // 初始化游戏
         window.onload = function() {
