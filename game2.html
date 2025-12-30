@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>谁是卧底游戏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #3a7bd5);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #3a7bd5;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-card.undercover {
+            color: #dc3545;
+            border-left: 5px solid #dc3545;
+        }
+        
+        .info-card.civilian {
+            color: #28a745;
+            border-left: 5px solid #28a745;
+        }
+        
+        .info-card.whiteboard {
+            color: #6c757d;
+            border-left: 5px solid #6c757d;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .players-section {
+            flex: 3;
+            min-width: 300px;
+        }
+        
+        .control-section {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .section-title {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.5rem;
+            color: #1a2a6c;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .players-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 25px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .player-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .player-card.active {
+            border: 3px solid #3a7bd5;
+        }
+        
+        .player-card.revealed {
+            border: 3px solid #ffc107;
+        }
+        
+        .player-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .player-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .player-role {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .role-undercover {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .role-civilian {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .role-whiteboard {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .player-word {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-top: 10px;
+            min-height: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .word-hidden {
+            filter: blur(8px);
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 5px;
+            user-select: none;
+        }
+        
+        .word-revealed {
+            filter: none;
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .reveal-hint {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .control-panel {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 25px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .word-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .word-display h3 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+        }
+        
+        .word-box {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc3545;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background-color: #3a7bd5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a6bc4;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .rules {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rules h3 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .rules li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .rules p.note {
+            font-style: italic;
+            color: #6c757d;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3a7bd5;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .word-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .word-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .reveal-status {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .status-item {
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-item i {
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .players-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-user-secret"></i> 谁是卧底</h1>
+            <div class="subtitle">5人局：1个卧底，3个平民，1个白板</div>
+            <div class="game-info">
+                <div class="info-card undercover">卧底: 1人</div>
+                <div class="info-card civilian">平民: 3人</div>
+                <div class="info-card whiteboard">白板: 1人</div>
+            </div>
+            <div class="reveal-status" id="revealStatus">
+                <div class="status-item"><i class="fas fa-lightbulb"></i> 点击玩家卡片查看词语</div>
+                <div class="status-item"><i class="fas fa-redo"></i> 再次点击隐藏词语</div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <section class="players-section">
+                <div class="section-title">
+                    <i class="fas fa-users"></i> 玩家信息
+                </div>
+                <div class="players-container" id="playersContainer">
+                    <!-- 玩家卡片将通过JS动态生成 -->
+                </div>
+            </section>
+            
+            <section class="control-section">
+                <div class="section-title">
+                    <i class="fas fa-gamepad"></i> 游戏控制
+                </div>
+                <div class="control-panel">
+                    <div class="word-display">
+                        <h3>当前显示的词语</h3>
+                        <div class="word-box" id="currentWord">点击"分配词语"开始游戏</div>
+                    </div>
+                    
+                    <div class="word-input">
+                        <input type="text" id="civilianWord" placeholder="输入平民词语">
+                        <input type="text" id="undercoverWord" placeholder="输入卧底词语">
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button class="btn btn-primary" id="assignBtn">
+                            <i class="fas fa-random"></i> 分配词语和角色
+                        </button>
+                        <button class="btn btn-success" id="revealAllBtn">
+                            <i class="fas fa-eye"></i> 显示所有玩家词语
+                        </button>
+                        <button class="btn btn-warning" id="hideAllBtn">
+                            <i class="fas fa-eye-slash"></i> 隐藏所有玩家词语
+                        </button>
+                        <button class="btn btn-warning" id="resetBtn">
+                            <i class="fas fa-redo"></i> 重置游戏
+                        </button>
+                        <button class="btn btn-danger" id="showWhiteboardBtn">
+                            <i class="fas fa-question-circle"></i> 显示白板玩家提示
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="rules">
+            <h3><i class="fas fa-info-circle"></i> 游戏规则</h3>
+            <ul>
+                <li><strong>平民(3人)</strong>：获得相同的词语，需要找出卧底</li>
+                <li><strong>卧底(1人)</strong>：获得与平民相关的词语，需要隐藏身份并找出平民词语</li>
+                <li><strong>白板(1人)</strong>：不获得任何词语，需要通过推理猜出平民的词语</li>
+                <li>每轮玩家依次描述自己获得的词语（白板玩家需要推理平民词语进行描述）</li>
+                <li>描述完毕后，玩家投票选出怀疑的卧底，得票最多者出局</li>
+                <li>游戏目标：
+                    <ul>
+                        <li>平民：找出卧底</li>
+                        <li>卧底：存活到最后或找出平民词语</li>
+                        <li>白板：正确推理出平民词语</li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="note">注意：白板玩家看不到任何词语，需要仔细倾听其他玩家的描述来推理平民词语，然后参与游戏。</p>
+        </div>
+        
+        <footer>
+            <p>谁是卧底游戏 | 设计：前端开发 | 5人局：1卧底 + 3平民 + 1白板</p>
+        </footer>
+    </div>
+
+    <script>
+        // 游戏状态
+        const gameState = {
+            players: [
+                { id: 1, name: "玩家1", role: "", word: "", isActive: true, isRevealed: false },
+                { id: 2, name: "玩家2", role: "", word: "", isActive: true, isRevealed: false },
+                { id: 3, name: "玩家3", role: "", word: "", isActive: true, isRevealed: false },
+                { id: 4, name: "玩家4", role: "", word: "", isActive: true, isRevealed: false },
+                { id: 5, name: "玩家5", role: "", word: "", isActive: true, isRevealed: false }
+            ],
+            civilianWord: "",
+            undercoverWord: "",
+            gameStarted: false
+        };
+        
+        // 默认词语库
+        const defaultWordPairs = [
+            { civilian: "图书馆", undercover: "书店" },
+            { civilian: "公交车", undercover: "地铁" },
+            { civilian: "咖啡", undercover: "奶茶" },
+            { civilian: "微信", undercover: "QQ" },
+            { civilian: "篮球", undercover: "足球" },
+            { civilian: "夏天", undercover: "春天" },
+            { civilian: "苹果", undercover: "梨" }
+        ];
+        
+        // 初始化玩家卡片
+        function initPlayers() {
+            const playersContainer = document.getElementById('playersContainer');
+            playersContainer.innerHTML = '';
+            
+            gameState.players.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = `player-card ${player.isActive ? 'active' : ''} ${player.isRevealed ? 'revealed' : ''}`;
+                playerCard.id = `player-${player.id}`;
+                playerCard.dataset.playerId = player.id;
+                
+                // 添加点击事件监听
+                playerCard.addEventListener('click', () => toggleWordDisplay(player.id));
+                
+                // 角色图标
+                let roleIcon = 'fas fa-user';
+                if (player.role === 'undercover') roleIcon = 'fas fa-user-secret';
+                if (player.role === 'whiteboard') roleIcon = 'fas fa-user-circle';
+                
+                // 角色显示文本
+                let roleText = '未分配';
+                let roleClass = '';
+                if (player.role === 'civilian') {
+                    roleText = '平民';
+                    roleClass = 'role-civilian';
+                } else if (player.role === 'undercover') {
+                    roleText = '卧底';
+                    roleClass = 'role-undercover';
+                } else if (player.role === 'whiteboard') {
+                    roleText = '白板';
+                    roleClass = 'role-whiteboard';
+                }
+                
+                // 词语显示状态
+                let wordDisplay = '等待分配...';
+                let wordClass = '';
+                let hintText = '';
+                
+                if (player.word) {
+                    if (player.role === 'whiteboard') {
+                        wordDisplay = player.isRevealed ? '无（需要推理平民词语）' : '？';
+                        wordClass = player.isRevealed ? 'word-revealed' : 'word-hidden';
+                        hintText = player.isRevealed ? '点击隐藏提示' : '点击显示提示';
+                    } else {
+                        wordDisplay = player.isRevealed ? player.word : '点击查看';
+                        wordClass = player.isRevealed ? 'word-revealed' : 'word-hidden';
+                        hintText = player.isRevealed ? '点击隐藏词语' : '点击显示词语';
+                    }
+                }
+                
+                playerCard.innerHTML = `
+                    <div class="player-icon">
+                        <i class="${roleIcon}"></i>
+                    </div>
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-role ${roleClass}">${roleText}</div>
+                    <div class="player-word ${wordClass}">${wordDisplay}</div>
+                    ${player.word ? `<div class="reveal-hint">${hintText}</div>` : ''}
+                `;
+                
+                playersContainer.appendChild(playerCard);
+            });
+        }
+        
+        // 切换词语显示/隐藏
+        function toggleWordDisplay(playerId) {
+            if (!gameState.gameStarted) return;
+            
+            const player = gameState.players.find(p => p.id === playerId);
+            if (!player || !player.word) return;
+            
+            // 切换显示状态
+            player.isRevealed = !player.isRevealed;
+            
+            // 更新玩家卡片显示
+            updatePlayerDisplay(playerId);
+        }
+        
+        // 更新单个玩家卡片显示（不重新生成整个卡片）
+        function updatePlayerDisplay(playerId) {
+            const player = gameState.players.find(p => p.id === playerId);
+            if (!player) return;
+            
+            const playerCard = document.getElementById(`player-${playerId}`);
+            if (!playerCard) return;
+            
+            // 更新卡片类
+            playerCard.classList.toggle('revealed', player.isRevealed);
+            
+            // 获取DOM元素
+            const wordElement = playerCard.querySelector('.player-word');
+            const hintElement = playerCard.querySelector('.reveal-hint');
+            
+            if (!wordElement) return;
+            
+            // 更新词语显示
+            if (player.role === 'whiteboard') {
+                wordElement.textContent = player.isRevealed ? '无（需要推理平民词语）' : '？';
+                wordElement.className = player.isRevealed ? 'player-word word-revealed' : 'player-word word-hidden';
+            } else {
+                wordElement.textContent = player.isRevealed ? player.word : '点击查看';
+                wordElement.className = player.isRevealed ? 'player-word word-revealed' : 'player-word word-hidden';
+            }
+            
+            // 更新提示文本
+            if (hintElement) {
+                hintElement.textContent = player.isRevealed ? '点击隐藏' + (player.role === 'whiteboard' ? '提示' : '词语') : 
+                                                '点击显示' + (player.role === 'whiteboard' ? '提示' : '词语');
+            }
+        }
+        
+        // 分配角色和词语
+        function assignRolesAndWords() {
+            const civilianWordInput = document.getElementById('civilianWord').value.trim();
+            const undercoverWordInput = document.getElementById('undercoverWord').value.trim();
+            
+            // 如果用户没有输入词语，使用默认词语
+            if (civilianWordInput && undercoverWordInput) {
+                gameState.civilianWord = civilianWordInput;
+                gameState.undercoverWord = undercoverWordInput;
+            } else {
+                // 随机选择一对默认词语
+                const randomPair = defaultWordPairs[Math.floor(Math.random() * defaultWordPairs.length)];
+                gameState.civilianWord = randomPair.civilian;
+                gameState.undercoverWord = randomPair.undercover;
+                
+                // 将词语填入输入框
+                document.getElementById('civilianWord').value = randomPair.civilian;
+                document.getElementById('undercoverWord').value = randomPair.undercover;
+            }
+            
+            // 重置玩家状态
+            gameState.players.forEach(player => {
+                player.role = '';
+                player.word = '';
+                player.isActive = true;
+                player.isRevealed = false;
+            });
+            
+            // 随机分配角色
+            const shuffledPlayers = [...gameState.players].sort(() => Math.random() - 0.5);
+            
+            // 分配卧底
+            shuffledPlayers[0].role = 'undercover';
+            shuffledPlayers[0].word = gameState.undercoverWord;
+            
+            // 分配白板
+            shuffledPlayers[1].role = 'whiteboard';
+            shuffledPlayers[1].word = '无（需要推理平民词语）';
+            
+            // 分配平民
+            for (let i = 2; i < shuffledPlayers.length; i++) {
+                shuffledPlayers[i].role = 'civilian';
+                shuffledPlayers[i].word = gameState.civilianWord;
+            }
+            
+            // 更新显示
+            initPlayers();
+            document.getElementById('currentWord').textContent = "已分配词语，点击玩家卡片查看";
+            gameState.gameStarted = true;
+            
+            alert("角色和词语已分配完成！请点击玩家卡片查看各自的词语。");
+        }
+        
+        // 显示所有玩家词语
+        function revealAllWords() {
+            if (!gameState.gameStarted) {
+                alert("请先分配角色和词语！");
+                return;
+            }
+            
+            // 显示所有玩家的词语
+            gameState.players.forEach(player => {
+                player.isRevealed = true;
+                updatePlayerDisplay(player.id);
+            });
+            
+            const wordDisplay = document.getElementById('currentWord');
+            wordDisplay.innerHTML = `
+                <div style="text-align: center; color: #28a745; font-weight: bold;">
+                    <i class="fas fa-check-circle"></i> 已显示所有玩家词语
+                </div>
+            `;
+        }
+        
+        // 隐藏所有玩家词语
+        function hideAllWords() {
+            if (!gameState.gameStarted) {
+                alert("请先分配角色和词语！");
+                return;
+            }
+            
+            // 隐藏所有玩家的词语
+            gameState.players.forEach(player => {
+                player.isRevealed = false;
+                updatePlayerDisplay(player.id);
+            });
+            
+            const wordDisplay = document.getElementById('currentWord');
+            wordDisplay.innerHTML = `
+                <div style="text-align: center; color: #6c757d; font-weight: bold;">
+                    <i class="fas fa-eye-slash"></i> 已隐藏所有玩家词语
+                </div>
+            `;
+        }
+        
+        // 显示白板玩家提示
+        function showWhiteboardHint() {
+            if (!gameState.gameStarted) {
+                alert("请先分配角色和词语！");
+                return;
+            }
+            
+            const whiteboardPlayer = gameState.players.find(player => player.role === 'whiteboard');
+            if (!whiteboardPlayer) {
+                alert("未找到白板玩家！");
+                return;
+            }
+            
+            const wordDisplay = document.getElementById('currentWord');
+            wordDisplay.innerHTML = `
+                <div style="text-align: center;">
+                    <h4>白板玩家提示</h4>
+                    <p><strong>${whiteboardPlayer.name}</strong> 是白板玩家</p>
+                    <p>白板玩家看不到任何词语，需要根据其他玩家的描述推理平民词语</p>
+                    <p>平民词语是：<strong style="color: #28a745; font-size: 1.5em;">${gameState.civilianWord}</strong></p>
+                    <p>卧底词语是：<strong style="color: #dc3545; font-size: 1.5em;">${gameState.undercoverWord}</strong></p>
+                </div>
+            `;
+        }
+        
+        // 重置游戏
+        function resetGame() {
+            gameState.players.forEach(player => {
+                player.role = '';
+                player.word = '';
+                player.isActive = true;
+                player.isRevealed = false;
+            });
+            
+            gameState.civilianWord = '';
+            gameState.undercoverWord = '';
+            gameState.gameStarted = false;
+            
+            document.getElementById('civilianWord').value = '';
+            document.getElementById('undercoverWord').value = '';
+            document.getElementById('currentWord').textContent = '点击"分配词语"开始游戏';
+            
+            initPlayers();
+        }
+        
+        // 事件监听
+        document.getElementById('assignBtn').addEventListener('click', assignRolesAndWords);
+        document.getElementById('revealAllBtn').addEventListener('click', revealAllWords);
+        document.getElementById('hideAllBtn').addEventListener('click', hideAllWords);
+        document.getElementById('resetBtn').addEventListener('click', resetGame);
+        document.getElementById('showWhiteboardBtn').addEventListener('click', showWhiteboardHint);
+        
+        // 初始化游戏
+        window.onload = function() {
+            initPlayers();
+        };
+    </script>
+</body>
+</html>
