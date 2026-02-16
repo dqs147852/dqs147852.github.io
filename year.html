@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026马年鸿运挑战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 235, 59, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffeb3b, #ff9800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 235, 59, 0.5);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .challenge-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 235, 59, 0.2);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .challenge-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: #ffeb3b;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .challenge-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .challenge-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #ffeb3b;
+        }
+        
+        .challenge-desc {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #ff9800, #ffeb3b);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            color: #b71c1c;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .start-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 20px rgba(255, 235, 59, 0.4);
+        }
+        
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-element {
+            position: absolute;
+            font-size: 2em;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .countdown {
+            text-align: center;
+            font-size: 5em;
+            font-weight: bold;
+            margin: 40px 0;
+            color: #ffeb3b;
+            text-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+        }
+        
+        .hidden-content {
+            display: none;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: modalIn 0.5s ease;
+        }
+        
+        .modal-content h2 {
+            color: #d32f2f;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes modalIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .firework {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .surprise-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-rain" id="matrixRain"></div>
+    <div class="floating-elements" id="floatingElements"></div>
+    <div class="container">
+        <div class="header">
+            <h1>🐎 2026 马年鸿运大挑战 🎁</h1>
+            <p>完成以下挑战解锁终极新春祝福，每个挑战都有意想不到的惊喜！</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="challenge-grid">
+            <div class="challenge-card" onclick="startChallenge(1)">
+                <span class="challenge-icon">🧧</span>
+                <h3 class="challenge-title">红包点击挑战</h3>
+                <p class="challenge-desc">点击移动的红包，考验你的反应速度！</p>
+                <button class="start-btn">开始挑战</button>
+            </div>
+            
+            <div class="challenge-card" onclick="startChallenge(2)">
+                <span class="challenge-icon">🔢</span>
+                <h3 class="challenge-title">数学迷宫</h3>
+                <p class="challenge-desc">解决新年数学难题，找到正确路径！</p>
+                <button class="start-btn">开始挑战</button>
+            </div>
+            
+            <div class="challenge-card" onclick="startChallenge(3)">
+                <span class="challenge-icon">🎯</span>
+                <h3 class="challenge-title">手速大考验</h3>
+                <p class="challenge-desc">在倒计时结束前点击尽可能多的目标！</p>
+                <button class="start-btn">开始挑战</button>
+            </div>
+            
+            <div class="challenge-card" onclick="startChallenge(4)">
+                <span class="challenge-icon">🔐</span>
+                <h3 class="challenge-title">密码破解</h3>
+                <p class="challenge-desc">破解新年密码，解锁神秘祝福！</p>
+                <button class="start-btn">开始挑战</button>
+            </div>
+        </div>
+        
+        <div class="countdown" id="countdown">10</div>
+        
+        <div class="hidden-content" id="secretMessage">
+            <h2 style="color: #ffeb3b; margin-bottom: 20px;">🎉 恭喜你发现了隐藏彩蛋！</h2>
+            <p style="font-size: 1.5em; margin-bottom: 20px;">你获得了：<br>2026全年好运加持<br>红包收不完特权<br>心想事成Buff</p>
+            <button class="start-btn" onclick="showFinalSurprise()">领取终极奖励</button>
+        </div>
+        
+        <div id="challengeArea"></div>
+    </div>
+    
+    <button class="surprise-btn" id="surpriseBtn" onclick="activateSecretMode()">🔍 点击有惊喜</button>
+    
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">挑战结果</h2>
+            <p id="modalMessage"></p>
+            <button class="start-btn" style="margin-top: 20px;" onclick="closeModal()">继续挑战</button>
+        </div>
+    </div>
+
+<script>
+    // 初始化变量
+    let challengeProgress = 0;
+    let score = 0;
+    let currentChallenge = null;
+    let challengeActive = false;
+    let challengeTimeout = null;
+    
+    // 创建浮动元素
+    function createFloatingElements() {
+        const container = document.getElementById('floatingElements');
+        const symbols = ['🧧', '🎁', '🐎', '💰', '🎉', '🎊', '🔥', '🍀'];
+        
+        for (let i = 0; i < 20; i++) {
+            const element = document.createElement('div');
+            element.className = 'floating-element';
+            element.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            element.style.left = `${Math.random() * 100}%`;
+            element.style.animationDuration = `${Math.random() * 20 + 10}s`;
+            element.style.animationDelay = `${Math.random() * 5}s`;
+            element.style.opacity = Math.random() * 0.5 + 0.3;
+            element.style.fontSize = `${Math.random() * 3 + 2}em`;
+            container.appendChild(element);
+        }
+    }
+    
+    // 创建黑客帝国雨效果
+    function createMatrixRain() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('matrixRain');
+        
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        container.appendChild(canvas);
+        
+        const chars = "01";
+        const charArray = chars.split("");
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px monospace";
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
+        window.addEventListener('resize', () => {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        });
+    }
+    
+    // 创建烟花效果
+    function createFirework(x, y) {
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+        
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'firework';
+            
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.background = color;
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.boxShadow = `0 0 10px ${color}`;
+            
+            document.body.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5 + 2;
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+            
+            let posX = x;
+            let posY = y;
+            
+            function animate() {
+                posX += vx;
+                posY += vy;
+                
+                particle.style.left = posX + 'px';
+                particle.style.top = posY + 'px';
+                particle.style.opacity = parseFloat(particle.style.opacity || 1) - 0.02;
+                
+                if (parseFloat(particle.style.opacity) > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    particle.remove();
+                }
+            }
+            
+            animate();
+        }
+    }
+    
+    // 开始挑战
+    function startChallenge(level) {
+        if (challengeActive) return;
+        challengeActive = true;
+        currentChallenge = level;
+        
+        const area = document.getElementById('challengeArea');
+        area.innerHTML = '';
+        
+        switch(level) {
+            case 1:
+                startClickChallenge();
+                break;
+            case 2:
+                startMathChallenge();
+                break;
+            case 3:
+                startSpeedChallenge();
+                break;
+            case 4:
+                startPasswordChallenge();
+                break;
+        }
+        
+        updateProgress();
+    }
+    
+    // 挑战1：点击红包
+    function startClickChallenge() {
+        const area = document.getElementById('challengeArea');
+        area.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <h2 style="color: #ffeb3b; margin-bottom: 20px;">🧧 红包点击挑战</h2>
+                <p style="margin-bottom: 20px; font-size: 1.2em;">
+                    点击出现的红包！你有10秒钟时间，点击10个红包即可通过！
+                </p>
+                <div id="clickTargets" style="
+                    position: relative;
+                    width: 100%;
+                    height: 400px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                    overflow: hidden;
+                "></div>
+                <p style="margin-top: 20px;">
+                    已点击: <span id="clickCount">0</span>/10
+                </p>
+            </div>
+        `;
+        
+        let clickCount = 0;
+        const targets = document.getElementById('clickTargets');
+        
+        function createTarget() {
+            if (clickCount >= 10 || !challengeActive) return;
+            
+            const target = document.createElement('div');
+            target.style.position = 'absolute';
+            target.style.width = '60px';
+            target.style.height = '80px';
+            target.style.background = '#f44336';
+            target.style.borderRadius = '5px';
+            target.style.cursor = 'pointer';
+            target.style.display = 'flex';
+            target.style.justifyContent = 'center';
+            target.style.alignItems = 'center';
+            target.style.fontSize = '2em';
+            target.style.color = '#ffeb3b';
+            target.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+            target.style.left = Math.random() * 90 + '%';
+            target.style.top = Math.random() * 80 + '%';
+            target.textContent = '🧧';
+            target.onclick = function() {
+                clickCount++;
+                document.getElementById('clickCount').textContent = clickCount;
+                createFirework(this.offsetLeft + 30, this.offsetTop + 40);
+                this.remove();
+                createTarget();
+                
+                if (clickCount >= 10) {
+                    challengeComplete();
+                }
+            };
+            
+            targets.appendChild(target);
+            
+            // 红包会移动
+            setTimeout(() => {
+                if (target.parentNode) {
+                    target.style.transition = 'left 0.5s ease, top 0.5s ease';
+                    target.style.left = Math.random() * 90 + '%';
+                    target.style.top = Math.random() * 80 + '%';
+                }
+            }, 500);
+        }
+        
+        for (let i = 0; i < 3; i++) {
+            setTimeout(createTarget, i * 300);
+        }
+        
+        challengeTimeout = setTimeout(() => {
+            if (challengeActive && clickCount < 10) {
+                challengeFailed("时间到！红包点击数量不足！");
+            }
+        }, 10000);
+    }
+    
+    // 挑战2：数学迷宫
+    function startMathChallenge() {
+        const area = document.getElementById('challengeArea');
+        const problems = [
+            { q: "(8 + 2) × 3 - 4 = ?", a: "26" },
+            { q: "新年是2026年，2026 ÷ 2 = ?", a: "1013" },
+            { q: "红包里有88元，分给4个人，每人多少？", a: "22" },
+            { q: "从1加到10等于多少？", a: "55" }
+        ];
+        
+        const randomProblem = problems[Math.floor(Math.random() * problems.length)];
+        
+        area.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <h2 style="color: #ffeb3b; margin-bottom: 20px;">🔢 数学迷宫挑战</h2>
+                <p style="margin-bottom: 20px; font-size: 1.2em;">
+                    回答数学问题找到正确路径！你有15秒时间！
+                </p>
+                <div style="
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 30px;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                ">
+                    <p style="font-size: 2em; margin-bottom: 20px;">${randomProblem.q}</p>
+                    <input type="text" id="mathAnswer" placeholder="输入答案" 
+                        style="padding: 10px; font-size: 1.5em; width: 200px; text-align: center;">
+                    <button onclick="checkMathAnswer('${randomProblem.a}')" 
+                        style="padding: 10px 20px; font-size: 1.2em; margin-left: 10px;">
+                        提交
+                    </button>
+                </div>
+                <p id="mathHint" style="color: #ff9800; margin-top: 20px;"></p>
+            </div>
+        `;
+        
+        challengeTimeout = setTimeout(() => {
+            if (challengeActive) {
+                challengeFailed("时间到！数学题未完成！");
+            }
+        }, 15000);
+    }
+    
+    function checkMathAnswer(correctAnswer) {
+        const userAnswer = document.getElementById('mathAnswer').value;
+        if (userAnswer === correctAnswer) {
+            challengeComplete();
+        } else {
+            document.getElementById('mathHint').textContent = 
+                "答案错误！提示：仔细计算每一步！";
+        }
+    }
+    
+    // 挑战3：手速挑战
+    function startSpeedChallenge() {
+        const area = document.getElementById('challengeArea');
+        let timeLeft = 5;
+        let clickCount = 0;
+        
+        area.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <h2 style="color: #ffeb3b; margin-bottom: 20px;">🎯 手速大考验</h2>
+                <p style="margin-bottom: 20px; font-size: 1.2em;">
+                    在倒计时结束前尽可能多地点击目标！点击20次通过！
+                </p>
+                <div style="font-size: 4em; color: #ffeb3b; margin: 20px 0;" id="timeDisplay">${timeLeft}</div>
+                <div id="speedTarget" style="
+                    width: 100px;
+                    height: 100px;
+                    background: #2196F3;
+                    border-radius: 50%;
+                    margin: 30px auto;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 2em;
+                    color: white;
+                    user-select: none;
+                    transition: all 0.1s;
+                " onclick="speedClick()">点击我！</div>
+                <p style="margin-top: 20px; font-size: 1.5em;">
+                    已点击: <span id="speedCount">0</span>/20
+                </p>
+            </div>
+        `;
+        
+        const target = document.getElementById('speedTarget');
+        const timeDisplay = document.getElementById('timeDisplay');
+        
+        const timer = setInterval(() => {
+            timeLeft--;
+            timeDisplay.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                if (clickCount >= 20) {
+                    challengeComplete();
+                } else {
+                    challengeFailed(`时间到！只点击了${clickCount}次，需要20次！`);
+                }
+            }
+        }, 1000);
+        
+        window.speedClick = function() {
+            if (!challengeActive) return;
+            
+            clickCount++;
+            document.getElementById('speedCount').textContent = clickCount;
+            
+            // 移动目标
+            const x = Math.random() * 80 + 10;
+            const y = Math.random() * 50 + 25;
+            target.style.transform = `translate(${x}%, ${y}%)`;
+            
+            // 改变颜色
+            const colors = ['#2196F3', '#4CAF50', '#FF9800', '#E91E63', '#9C27B0'];
+            target.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            createFirework(target.offsetLeft + 50, target.offsetTop + 50);
+            
+            if (clickCount >= 20) {
+                clearInterval(timer);
+                setTimeout(challengeComplete, 500);
+            }
+        };
+    }
+    
+    // 挑战4：密码破解
+    function startPasswordChallenge() {
+        const area = document.getElementById('challengeArea');
+        const password = "新年快乐";
+        const hints = [
+            "第一个字：新的一年开始",
+            "第二个字：与'旧'相对",
+            "第三个字：高兴、喜悦",
+            "第四个字：音乐、节奏"
+        ];
+        
+        area.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <h2 style="color: #ffeb3b; margin-bottom: 20px;">🔐 密码破解挑战</h2>
+                <p style="margin-bottom: 20px; font-size: 1.2em;">
+                    根据提示破解4字密码，你有3次机会！
+                </p>
+                <div style="
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 30px;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                ">
+                    <p style="margin-bottom: 15px; font-size: 1.1em;">提示：这是一个常见的新年祝福语</p>
+                    ${hints.map((hint, i) => `
+                        <p style="color: #ff9800; margin: 10px 0;">${hint}</p>
+                    `).join('')}
+                    <input type="text" id="passwordInput" placeholder="输入4字密码" 
+                        style="padding: 10px; font-size: 1.5em; width: 300px; text-align: center; margin: 20px 0;"
+                        maxlength="4">
+                    <br>
+                    <button onclick="checkPassword('${password}')" 
+                        style="padding: 10px 30px; font-size: 1.2em;">
+                        验证密码
+                    </button>
+                </div>
+                <p id="passwordResult" style="margin-top: 20px;"></p>
+                <p id="attemptsLeft" style="color: #ffeb3b;">剩余尝试次数: 3</p>
+            </div>
+        `;
+    }
+    
+    let passwordAttempts = 3;
+    function checkPassword(correctPassword) {
+        const input = document.getElementById('passwordInput').value;
+        const result = document.getElementById('passwordResult');
+        const attemptsDisplay = document.getElementById('attemptsLeft');
+        
+        if (input === correctPassword) {
+            challengeComplete();
+            return;
+        }
+        
+        passwordAttempts--;
+        attemptsDisplay.textContent = `剩余尝试次数: ${passwordAttempts}`;
+        
+        if (passwordAttempts <= 0) {
+            challengeFailed("尝试次数用尽！密码是：新年快乐");
+        } else {
+            result.textContent = "密码错误！再试试看！";
+            result.style.color = "#f44336";
+        }
+    }
+    
+    // 挑战完成
+    function challengeComplete() {
+        if (!challengeActive) return;
+        challengeActive = false;
+        clearTimeout(challengeTimeout);
+        
+        score += 100;
+        challengeProgress += 25;
+        updateProgress();
+        
+        // 随机显示成功消息
+        const messages = [
+            "🎉 太棒了！挑战成功！",
+            "🌟 完美通关！你真是个天才！",
+            "🔥 太厉害了！轻松过关！",
+            "💪 强无敌！继续下一个挑战！"
+        ];
+        
+        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        
+        document.getElementById('modalTitle').textContent = "挑战成功！";
+        document.getElementById('modalMessage').innerHTML = `
+            ${randomMsg}<br><br>
+            获得积分: +100<br>
+            当前总分: ${score}<br><br>
+            <span style="color: #4CAF50; font-size: 1.2em;">继续解锁更多挑战！</span>
+        `;
+        document.getElementById('resultModal').style.display = 'flex';
+        
+        // 随机显示隐藏彩蛋
+        if (Math.random() < 0.3) {
+            document.getElementById('surpriseBtn').style.display = 'block';
+        }
+        
+        // 检查是否完成所有挑战
+        if (challengeProgress >= 100) {
+            setTimeout(() => {
+                document.getElementById('secretMessage').style.display = 'block';
+                document.getElementById('secretMessage').scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+    }
+    
+    // 挑战失败
+    function challengeFailed(reason) {
+        if (!challengeActive) return;
+        challengeActive = false;
+        clearTimeout(challengeTimeout);
+        
+        document.getElementById('modalTitle').textContent = "挑战失败";
+        document.getElementById('modalMessage').innerHTML = `
+            😅 ${reason}<br><br>
+            <span style="color: #f44336;">别灰心，再试一次！</span>
+        `;
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+    
+    // 更新进度
+    function updateProgress() {
+        const progressBar = document.getElementById('progressFill');
+        progressBar.style.width = `${challengeProgress}%`;
+    }
+    
+    // 关闭弹窗
+    function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+        document.getElementById('challengeArea').innerHTML = '';
+        
+        // 随机触发特效
+        if (Math.random() < 0.5) {
+            document.body.style.background = `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16)} 0%, #${Math.floor(Math.random()*16777215).toString(16)} 100%)`;
+            setTimeout(() => {
+                document.body.style.background = 'linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%)';
+            }, 1000);
+        }
+    }
+    
+    // 显示最终惊喜
+    function showFinalSurprise() {
+        const area = document.getElementById('challengeArea');
+        area.innerHTML = `
+            <div style="text-align: center; padding: 50px;">
+                <h1 style="color: #ffeb3b; font-size: 4em; margin-bottom: 30px;">🎊 恭喜通关！</h1>
+                <div style="
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 40px;
+                    border-radius: 20px;
+                    margin: 30px 0;
+                ">
+                    <p style="font-size: 1.8em; margin-bottom: 20px; line-height: 1.6;">
+                        🎁 你成功完成了所有挑战！<br>
+                        🎉 获得2026马年终极祝福！<br>
+                        💰 红包雨即将来临！<br>
+                        🍀 好运将伴随你一整年！
+                    </p>
+                    <div id="finalAnimation" style="
+                        font-size: 5em;
+                        margin: 40px 0;
+                        animation: bounce 1s infinite;
+                    ">🐎🎁🔥🎉</div>
+                    <p style="font-size: 1.5em; color: #4CAF50;">
+                        最终得分: <span style="font-size: 2em;">${score}</span>
+                    </p>
+                </div>
+                <button class="start-btn" onclick="startFireworksShow()" style="font-size: 1.5em; padding: 20px 50px;">
+                    观看庆祝烟花秀
+                </button>
+            </div>
+        `;
+        
+        // 开始倒计时特效
+        startCountdown();
+    }
+    
+    // 倒计时特效
+    function startCountdown() {
+        let count = 10;
+        const countdownElement = document.getElementById('countdown');
+        countdownElement.style.display = 'block';
+        
+        const countdownInterval = setInterval(() => {
+            countdownElement.textContent = count;
+            countdownElement.style.transform = `scale(${1 + (10 - count) * 0.1})`;
+            
+            if (count <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.style.display = 'none';
+                return;
+            }
+            
+            count--;
+        }, 1000);
+    }
+    
+    // 开始烟花秀
+    function startFireworksShow() {
+        const interval = setInterval(() => {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            createFirework(x, y);
+            
+            if (Math.random() < 0.3) {
+                setTimeout(() => {
+                    createFirework(x + 50, y + 50);
+                }, 300);
+            }
+        }, 300);
+        
+        setTimeout(() => {
+            clearInterval(interval);
+            alert("🎆 烟花秀结束！感谢参与2026新年挑战！\n\n祝你新年快乐，万事如意！");
+        }, 5000);
+    }
+    
+    // 激活秘密模式
+    function activateSecretMode() {
+        document.body.style.filter = "invert(1)";
+        document.body.style.transition = "filter 2s";
+        
+        setTimeout(() => {
+            document.body.style.filter = "none";
+        }, 2000);
+        
+        // 创建大量浮动元素
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                createFirework(x, y);
+            }, i * 100);
+        }
+        
+        document.getElementById('surpriseBtn').style.display = 'none';
+    }
+    
+    // 初始化
+    window.onload = function() {
+        createFloatingElements();
+        createMatrixRain();
+        
+        // 随机点击事件
+        document.body.addEventListener('click', function(e) {
+            if (Math.random() < 0.1 && e.target.className !== 'start-btn') {
+                createFirework(e.clientX, e.clientY);
+            }
+        });
+        
+        // 随机显示隐藏按钮
+        setTimeout(() => {
+            if (Math.random() < 0.5) {
+                document.getElementById('surpriseBtn').style.display = 'block';
+            }
+        }, 10000);
+        
+        console.log("🎮 新年恶搞网页已加载！");
+        console.log("💡 提示：完成所有挑战解锁终极奖励！");
+    };
+</script>
+</body>
+</html>
