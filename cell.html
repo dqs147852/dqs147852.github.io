@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蛋白质合成过程模拟 - 已修复</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0c8ff;
+            margin-bottom: 20px;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .simulation-area {
+            flex: 1;
+            min-width: 300px;
+            min-height: 600px;
+            background: rgba(10, 25, 47, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .controls {
+            width: 300px;
+            background: rgba(10, 25, 47, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .cell-membrane {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            border: 3px dashed #4cc9f0;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .organelle {
+            position: absolute;
+        }
+        
+        .nucleus {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #3a0ca3, #1d3557);
+            border-radius: 50%;
+            top: 20%;
+            left: 10%;
+            border: 3px solid #7209b7;
+            z-index: 2;
+        }
+        
+        .nucleus::after {
+            content: "细胞核";
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #a0c8ff;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .endoplasmic-reticulum {
+            width: 200px;
+            height: 150px;
+            background: rgba(86, 11, 173, 0.3);
+            border: 2px solid #7209b7;
+            border-radius: 20px;
+            top: 40%;
+            left: 15%;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .endoplasmic-reticulum::before {
+            content: "内质网";
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #a0c8ff;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .ribosomes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .ribosome {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #f72585;
+            border-radius: 50%;
+            z-index: 4;
+        }
+        
+        .golgi-apparatus {
+            width: 180px;
+            height: 100px;
+            background: rgba(245, 40, 145, 0.2);
+            border: 2px solid #f72585;
+            border-radius: 10px;
+            top: 30%;
+            right: 20%;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .golgi-apparatus::before {
+            content: "高尔基体";
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #a0c8ff;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .vesicle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff9e00, #ff6d00);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a2e;
+            font-weight: bold;
+            font-size: 0.7rem;
+            box-shadow: 0 0 10px rgba(255, 157, 0, 0.7);
+            transition: all 1s linear;
+        }
+        
+        .protein {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #4cc9f0;
+            border-radius: 2px;
+            z-index: 6;
+            transition: all 1s linear;
+        }
+        
+        .mrna {
+            position: absolute;
+            width: 100px;
+            height: 5px;
+            background: linear-gradient(90deg, #a0c8ff, #4cc9f0);
+            border-radius: 3px;
+            z-index: 4;
+            transition: all 1.5s ease-in-out;
+        }
+        
+        .moving {
+            transition: all 1s ease-in-out;
+        }
+        
+        .control-panel {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4cc9f0;
+            border-bottom: 2px solid #4361ee;
+            padding-bottom: 8px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-reset {
+            background: linear-gradient(90deg, #f72585, #b5179e);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .step-indicator {
+            background: rgba(0, 20, 40, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #4cc9f0;
+            margin-bottom: 8px;
+        }
+        
+        .step-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #c5d5ff;
+        }
+        
+        .current-step {
+            font-weight: bold;
+            color: #ff9e00;
+        }
+        
+        .process-steps {
+            margin-top: 20px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 20, 40, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            background: rgba(67, 97, 238, 0.2);
+            border-left: 4px solid #4cc9f0;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #4361ee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+        
+        .step-text {
+            flex: 1;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 8px;
+        }
+        
+        .legend-text {
+            font-size: 0.85rem;
+        }
+        
+        .info-panel {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-panel h3 {
+            color: #4cc9f0;
+            margin-bottom: 15px;
+        }
+        
+        .info-panel p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .highlight {
+            color: #ff9e00;
+            font-weight: bold;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 40, 80, 0.5);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .controls {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>蛋白质合成过程模拟</h1>
+            <p class="subtitle">可视化展示蛋白质在细胞内的合成、加工和运输过程</p>
+        </header>
+        
+        <div class="content">
+            <div class="simulation-area" id="simulationArea">
+                <!-- 细胞膜 -->
+                <div class="cell-membrane"></div>
+                
+                <!-- 细胞核 -->
+                <div class="organelle nucleus"></div>
+                
+                <!-- 内质网 -->
+                <div class="organelle endoplasmic-reticulum" id="er">
+                    <div class="ribosomes" id="ribosomesContainer"></div>
+                </div>
+                
+                <!-- 高尔基体 -->
+                <div class="organelle golgi-apparatus" id="golgi"></div>
+                
+                <!-- 动态元素将通过JavaScript添加 -->
+            </div>
+            
+            <div class="controls">
+                <div class="control-panel">
+                    <h2>控制面板</h2>
+                    <button class="btn" id="startBtn">开始模拟</button>
+                    <button class="btn" id="pauseBtn" disabled>暂停模拟</button>
+                    <button class="btn btn-reset" id="resetBtn">重置模拟</button>
+                    <div class="status" id="status">准备开始模拟</div>
+                </div>
+                
+                <div class="process-steps">
+                    <h2>蛋白质合成步骤</h2>
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <div class="step-text">mRNA从细胞核进入细胞质</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <div class="step-text">核糖体结合mRNA并开始翻译</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <div class="step-text">新生肽链进入内质网腔</div>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-number">4</div>
+                        <div class="step-text">蛋白质折叠和初步修饰</div>
+                    </div>
+                    <div class="step" id="step5">
+                        <div class="step-number">5</div>
+                        <div class="step-text">囊泡运输到高尔基体</div>
+                    </div>
+                    <div class="step" id="step6">
+                        <div class="step-number">6</div>
+                        <div class="step-text">高尔基体加工和分选</div>
+                    </div>
+                    <div class="step" id="step7">
+                        <div class="step-number">7</div>
+                        <div class="step-text">囊泡运输到细胞膜</div>
+                    </div>
+                    <div class="step" id="step8">
+                        <div class="step-number">8</div>
+                        <div class="step-text">胞吐作用释放蛋白质</div>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f72585;"></div>
+                        <div class="legend-text">核糖体</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #7209b7;"></div>
+                        <div class="legend-text">内质网</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff9e00;"></div>
+                        <div class="legend-text">囊泡</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4cc9f0;"></div>
+                        <div class="legend-text">蛋白质</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>蛋白质合成过程说明</h3>
+            <p>蛋白质合成是细胞中最重要的生命活动之一。这个过程从细胞核中DNA转录产生mRNA开始，mRNA离开细胞核后，在细胞质中被核糖体翻译成蛋白质。</p>
+            <p>在<span class="highlight">粗面内质网</span>上合成的蛋白质会进入内质网腔进行折叠和初步修饰，然后被包裹进<span class="highlight">囊泡</span>中，运输到<span class="highlight">高尔基体</span>。</p>
+            <p>高尔基体对蛋白质进行进一步加工、分选和包装，然后形成新的囊泡，将蛋白质运输到<span class="highlight">细胞膜</span>，通过胞吐作用释放到细胞外或运送到其他细胞器。</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const simulationArea = document.getElementById('simulationArea');
+            const er = document.getElementById('er');
+            const golgi = document.getElementById('golgi');
+            const ribosomesContainer = document.getElementById('ribosomesContainer');
+            const startBtn = document.getElementById('startBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const status = document.getElementById('status');
+            const steps = document.querySelectorAll('.step');
+            
+            let simulationInterval = null;
+            let isAnimating = false;
+            let isPaused = false;
+            let currentStep = 1;
+            let vesicles = [];
+            let proteins = [];
+            let animationTimeouts = [];
+            
+            // 初始化核糖体
+            function initRibosomes() {
+                ribosomesContainer.innerHTML = '';
+                for (let i = 0; i < 8; i++) {
+                    const ribosome = document.createElement('div');
+                    ribosome.className = 'ribosome';
+                    ribosome.style.left = `${20 + (i % 4) * 40}px`;
+                    ribosome.style.top = `${20 + Math.floor(i / 4) * 40}px`;
+                    ribosomesContainer.appendChild(ribosome);
+                }
+            }
+            
+            // 创建mRNA
+            function createMRNA() {
+                return new Promise((resolve) => {
+                    status.textContent = "步骤1: mRNA从细胞核进入细胞质";
+                    
+                    const mrna = document.createElement('div');
+                    mrna.className = 'mrna';
+                    mrna.id = 'mrna';
+                    
+                    // 设置mRNA的初始位置（在细胞核内）
+                    const nucleus = document.querySelector('.nucleus');
+                    const nucleusRect = nucleus.getBoundingClientRect();
+                    const simRect = simulationArea.getBoundingClientRect();
+                    
+                    const startX = nucleusRect.left - simRect.left + nucleusRect.width/2;
+                    const startY = nucleusRect.top - simRect.top + nucleusRect.height/2;
+                    
+                    mrna.style.left = `${startX}px`;
+                    mrna.style.top = `${startY}px`;
+                    mrna.style.opacity = '0';
+                    
+                    simulationArea.appendChild(mrna);
+                    
+                    // 淡入效果
+                    setTimeout(() => {
+                        mrna.style.opacity = '1';
+                    }, 100);
+                    
+                    // 移动到内质网
+                    setTimeout(() => {
+                        const erRect = er.getBoundingClientRect();
+                        const targetX = erRect.left - simRect.left - 30;
+                        const targetY = erRect.top - simRect.top + erRect.height/2;
+                        
+                        mrna.style.left = `${targetX}px`;
+                        mrna.style.top = `${targetY}px`;
+                        
+                        // 动画完成后
+                        setTimeout(() => {
+                            mrna.remove();
+                            updateStep(2);
+                            resolve();
+                        }, 1500);
+                    }, 800);
+                });
+            }
+            
+            // 开始翻译过程
+            function startTranslation() {
+                return new Promise((resolve) => {
+                    status.textContent = "步骤2-3: 核糖体翻译mRNA，新生肽链进入内质网";
+                    
+                    // 在内质网上创建蛋白质
+                    for (let i = 0; i < 3; i++) {
+                        setTimeout(() => {
+                            createProteinAtER(i);
+                        }, i * 800);
+                    }
+                    
+                    setTimeout(() => {
+                        updateStep(4);
+                        status.textContent = "步骤4: 蛋白质在内质网中折叠和修饰";
+                        
+                        setTimeout(() => {
+                            resolve();
+                        }, 1500);
+                    }, 3000);
+                });
+            }
+            
+            // 在内质网上创建蛋白质
+            function createProteinAtER(index) {
+                const protein = document.createElement('div');
+                protein.className = 'protein';
+                protein.id = `protein-${index}`;
+                
+                // 放置在内质网区域内
+                const erRect = er.getBoundingClientRect();
+                const simRect = simulationArea.getBoundingClientRect();
+                
+                const left = erRect.left - simRect.left + 20 + (index * 40);
+                const top = erRect.top - simRect.top + 40;
+                
+                protein.style.left = `${left}px`;
+                protein.style.top = `${top}px`;
+                protein.style.opacity = '0';
+                protein.style.transform = 'scale(0)';
+                
+                simulationArea.appendChild(protein);
+                proteins.push(protein);
+                
+                // 蛋白质生长动画
+                setTimeout(() => {
+                    protein.style.opacity = '1';
+                    protein.style.transform = 'scale(1)';
+                    protein.style.width = '15px';
+                    protein.style.height = '15px';
+                }, 100);
+            }
+            
+            // 从内质网创建囊泡
+            function createVesicleFromER() {
+                return new Promise((resolve) => {
+                    status.textContent = "步骤5: 囊泡从内质网运输到高尔基体";
+                    
+                    const vesicle = document.createElement('div');
+                    vesicle.className = 'vesicle';
+                    vesicle.id = 'vesicle1';
+                    vesicle.style.width = '30px';
+                    vesicle.style.height = '30px';
+                    vesicle.style.opacity = '0';
+                    
+                    // 放置在内质网旁边
+                    const erRect = er.getBoundingClientRect();
+                    const simRect = simulationArea.getBoundingClientRect();
+                    
+                    const startX = erRect.left - simRect.left + 180;
+                    const startY = erRect.top - simRect.top + 50;
+                    
+                    vesicle.style.left = `${startX}px`;
+                    vesicle.style.top = `${startY}px`;
+                    
+                    // 添加蛋白质到囊泡中
+                    const proteinInside = document.createElement('div');
+                    proteinInside.className = 'protein';
+                    proteinInside.style.width = '10px';
+                    proteinInside.style.height = '10px';
+                    proteinInside.style.position = 'absolute';
+                    proteinInside.style.top = '50%';
+                    proteinInside.style.left = '50%';
+                    proteinInside.style.transform = 'translate(-50%, -50%)';
+                    vesicle.appendChild(proteinInside);
+                    
+                    // 移除原来的蛋白质
+                    proteins.forEach(protein => {
+                        if (protein && protein.parentNode) {
+                            protein.parentNode.removeChild(protein);
+                        }
+                    });
+                    proteins = [];
+                    
+                    simulationArea.appendChild(vesicle);
+                    vesicles.push(vesicle);
+                    
+                    // 淡入效果
+                    setTimeout(() => {
+                        vesicle.style.opacity = '1';
+                    }, 100);
+                    
+                    // 移动囊泡到高尔基体
+                    setTimeout(() => {
+                        const golgiRect = golgi.getBoundingClientRect();
+                        const targetX = golgiRect.left - simRect.left - 20;
+                        const targetY = golgiRect.top - simRect.top + 30;
+                        
+                        vesicle.style.left = `${targetX}px`;
+                        vesicle.style.top = `${targetY}px`;
+                        
+                        // 动画完成后
+                        setTimeout(() => {
+                            updateStep(6);
+                            status.textContent = "步骤6: 高尔基体加工和分选蛋白质";
+                            resolve();
+                        }, 1500);
+                    }, 800);
+                });
+            }
+            
+            // 从高尔基体创建囊泡
+            function createVesicleFromGolgi() {
+                return new Promise((resolve) => {
+                    status.textContent = "步骤7: 囊泡从高尔基体运输到细胞膜";
+                    
+                    const vesicle = document.createElement('div');
+                    vesicle.className = 'vesicle';
+                    vesicle.id = 'vesicle2';
+                    vesicle.style.width = '25px';
+                    vesicle.style.height = '25px';
+                    vesicle.textContent = 'P';
+                    vesicle.style.opacity = '0';
+                    
+                    // 放置在高尔基体旁边
+                    const golgiRect = golgi.getBoundingClientRect();
+                    const simRect = simulationArea.getBoundingClientRect();
+                    
+                    const startX = golgiRect.left - simRect.left + 160;
+                    const startY = golgiRect.top - simRect.top + 30;
+                    
+                    vesicle.style.left = `${startX}px`;
+                    vesicle.style.top = `${startY}px`;
+                    
+                    simulationArea.appendChild(vesicle);
+                    vesicles.push(vesicle);
+                    
+                    // 淡入效果
+                    setTimeout(() => {
+                        vesicle.style.opacity = '1';
+                    }, 100);
+                    
+                    // 移动囊泡到细胞膜
+                    setTimeout(() => {
+                        const membrane = document.querySelector('.cell-membrane');
+                        const membraneRect = membrane.getBoundingClientRect();
+                        const targetX = membraneRect.left - simRect.left + membraneRect.width * 0.7;
+                        const targetY = membraneRect.top - simRect.top + membraneRect.height * 0.6;
+                        
+                        vesicle.style.left = `${targetX}px`;
+                        vesicle.style.top = `${targetY}px`;
+                        
+                        // 动画完成后
+                        setTimeout(() => {
+                            updateStep(8);
+                            status.textContent = "步骤8: 囊泡与细胞膜融合，释放蛋白质";
+                            resolve();
+                        }, 1500);
+                    }, 1000);
+                });
+            }
+            
+            // 创建释放的蛋白质
+            function createReleasedProtein() {
+                return new Promise((resolve) => {
+                    // 移除囊泡
+                    const vesicle = document.getElementById('vesicle2');
+                    if (vesicle) {
+                        vesicle.style.opacity = '0';
+                        setTimeout(() => {
+                            if (vesicle.parentNode) {
+                                vesicle.parentNode.removeChild(vesicle);
+                            }
+                        }, 500);
+                    }
+                    
+                    // 创建释放的蛋白质
+                    setTimeout(() => {
+                        const protein = document.createElement('div');
+                        protein.className = 'protein';
+                        protein.id = 'released-protein';
+                        protein.style.width = '20px';
+                        protein.style.height = '20px';
+                        protein.style.opacity = '0';
+                        
+                        const membrane = document.querySelector('.cell-membrane');
+                        const membraneRect = membrane.getBoundingClientRect();
+                        const simRect = simulationArea.getBoundingClientRect();
+                        
+                        const startX = membraneRect.left - simRect.left + membraneRect.width * 0.7;
+                        const startY = membraneRect.top - simRect.top + membraneRect.height * 0.6;
+                        
+                        protein.style.left = `${startX}px`;
+                        protein.style.top = `${startY}px`;
+                        
+                        simulationArea.appendChild(protein);
+                        
+                        // 淡入效果
+                        setTimeout(() => {
+                            protein.style.opacity = '1';
+                        }, 100);
+                        
+                        // 蛋白质移动到细胞外
+                        setTimeout(() => {
+                            const targetX = membraneRect.left - simRect.left + membraneRect.width * 0.8;
+                            const targetY = membraneRect.top - simRect.top + membraneRect.height * 0.5;
+                            
+                            protein.style.left = `${targetX}px`;
+                            protein.style.top = `${targetY}px`;
+                            
+                            // 闪烁效果
+                            let flashCount = 0;
+                            const flashInterval = setInterval(() => {
+                                protein.style.opacity = protein.style.opacity === '1' ? '0.5' : '1';
+                                flashCount++;
+                                
+                                if (flashCount > 5) {
+                                    clearInterval(flashInterval);
+                                    protein.style.opacity = '1';
+                                    resolve();
+                                }
+                            }, 200);
+                        }, 500);
+                    }, 600);
+                });
+            }
+            
+            // 更新步骤指示器
+            function updateStep(stepNumber) {
+                currentStep = stepNumber;
+                
+                // 移除所有步骤的active类
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // 激活当前步骤
+                const currentStepElement = document.getElementById(`step${stepNumber}`);
+                if (currentStepElement) {
+                    currentStepElement.classList.add('active');
+                }
+            }
+            
+            // 执行整个模拟过程
+            async function runSimulation() {
+                isAnimating = true;
+                isPaused = false;
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                startBtn.textContent = '模拟中...';
+                
+                try {
+                    // 步骤1: mRNA从细胞核移动到细胞质
+                    await createMRNA();
+                    if (isPaused) return;
+                    
+                    // 步骤2-4: 翻译和蛋白质合成
+                    await startTranslation();
+                    if (isPaused) return;
+                    
+                    // 步骤5: 囊泡从内质网运输到高尔基体
+                    await createVesicleFromER();
+                    if (isPaused) return;
+                    
+                    // 步骤6: 等待高尔基体加工
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    if (isPaused) return;
+                    
+                    // 步骤7: 囊泡从高尔基体运输到细胞膜
+                    await createVesicleFromGolgi();
+                    if (isPaused) return;
+                    
+                    // 步骤8: 释放蛋白质
+                    await createReleasedProtein();
+                    if (isPaused) return;
+                    
+                    // 模拟完成
+                    status.textContent = "模拟完成！蛋白质已成功合成并分泌到细胞外";
+                    startBtn.textContent = '重新开始';
+                    startBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                    isAnimating = false;
+                    
+                } catch (error) {
+                    console.error("模拟出错:", error);
+                    status.textContent = "模拟出错，请重置后重试";
+                    resetSimulation();
+                }
+            }
+            
+            // 开始模拟
+            function startSimulation() {
+                if (isAnimating) {
+                    // 如果正在运行，则重置
+                    resetSimulation();
+                    setTimeout(() => {
+                        runSimulation();
+                    }, 500);
+                } else {
+                    // 否则开始新的模拟
+                    resetSimulation();
+                    runSimulation();
+                }
+            }
+            
+            // 暂停模拟
+            function pauseSimulation() {
+                if (!isAnimating) return;
+                
+                if (isPaused) {
+                    // 继续模拟
+                    isPaused = false;
+                    pauseBtn.textContent = '暂停模拟';
+                    status.textContent = "模拟继续...";
+                    runSimulation();
+                } else {
+                    // 暂停模拟
+                    isPaused = true;
+                    pauseBtn.textContent = '继续模拟';
+                    status.textContent = "模拟已暂停";
+                    
+                    // 清除所有定时器
+                    animationTimeouts.forEach(timeout => clearTimeout(timeout));
+                    animationTimeouts = [];
+                }
+            }
+            
+            // 重置模拟
+            function resetSimulation() {
+                // 清除所有定时器
+                animationTimeouts.forEach(timeout => clearTimeout(timeout));
+                animationTimeouts = [];
+                
+                // 移除所有动态创建的元素
+                const dynamicElements = document.querySelectorAll('.protein, .vesicle, .mrna');
+                dynamicElements.forEach(el => {
+                    if (el.parentNode) {
+                        el.parentNode.removeChild(el);
+                    }
+                });
+                
+                // 重置状态
+                vesicles = [];
+                proteins = [];
+                currentStep = 1;
+                isAnimating = false;
+                isPaused = false;
+                updateStep(1);
+                
+                // 重置按钮状态
+                startBtn.textContent = '开始模拟';
+                startBtn.disabled = false;
+                pauseBtn.textContent = '暂停模拟';
+                pauseBtn.disabled = true;
+                status.textContent = "准备开始模拟";
+                
+                // 重新初始化核糖体
+                initRibosomes();
+            }
+            
+            // 事件监听
+            startBtn.addEventListener('click', startSimulation);
+            pauseBtn.addEventListener('click', pauseSimulation);
+            resetBtn.addEventListener('click', resetSimulation);
+            
+            // 初始化
+            initRibosomes();
+            
+            // 添加一些初始动画效果
+            const organelles = document.querySelectorAll('.organelle');
+            organelles.forEach((organelle, index) => {
+                organelle.style.opacity = '0';
+                organelle.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    organelle.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                    organelle.style.opacity = '1';
+                    organelle.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // 细胞膜动画
+            const membrane = document.querySelector('.cell-membrane');
+            membrane.style.opacity = '0';
+            setTimeout(() => {
+                membrane.style.transition = 'opacity 1.5s ease';
+                membrane.style.opacity = '1';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
