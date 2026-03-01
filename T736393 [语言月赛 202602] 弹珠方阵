@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define st string
+#define ld long double
+#define ch char
+typedef unsigned long long ull;
+ll n, m, sum,  a[505][505], k;
+int mmax;
+map <ll, ll> mm;
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0), cout.tie(0);
+	cin >> n >> m >> k;
+	for (int i = 1 ; i <= n ; i++) {
+		for (int j = 1 ; j <= m ; j++) {
+			cin >> a[i][j];
+		}
+	}
+	for (int i = 1 ; i <= n ; i++) {
+		for (int j = 1 ; j <= m ; j++) {
+			for (int len1 = 1 ; i + len1 - 1 <= n ; len1++) {
+				for (int len2 = 1 ; j + len2 - 1 <= m; len2++) {
+					mm.clear();
+					sum = 0;
+					for (int k1 = j ; k1 <= i + len1 - 1 ; k1++) {
+						for (int k2 = j; k2 <= j + len2 - 1 ; k2++) {
+							if (mm[a[k1][k2]] == 0) {
+								sum++;
+								mm[a[k1][k2]] = 1;
+							}
+						}
+					}
+					if (sum == k)
+						mmax = max(mmax, len1 * len2);
+				}
+			}
+		}
+	}
+	mmax == 0 ? cout << "Hrk" : cout << mmax;
+	return 0;
+}
