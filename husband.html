@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>made by dqs</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        height: 100vh;
+        background: radial-gradient(circle at center, #1a1a2e, #0f0f1a);
+        overflow: hidden;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .popup {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 14px 22px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        text-align: center;
+        animation: popUp 0.6s ease forwards;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .popup h2 {
+        font-size: 18px;
+        color: #c0392b;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    @keyframes popUp {
+        0% {
+            transform: scale(0.6);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<script>
+const text = "优尔哈斯本德";
+
+// 爱心参数方程
+function heartX(t) {
+    return 16 * Math.pow(Math.sin(t), 3);
+}
+
+function heartY(t) {
+    return -(13 * Math.cos(t)
+           - 5 * Math.cos(2 * t)
+           - 2 * Math.cos(3 * t)
+           - Math.cos(4 * t));
+}
+
+const centerX = window.innerWidth / 2;
+const centerY = window.innerHeight / 2;
+const scale = 12; // 爱心大小
+
+let t = 0;
+
+function createPopup() {
+    if (t > Math.PI * 2) {
+        t = 0;
+    }
+
+    const x = centerX + heartX(t) * scale;
+    const y = centerY + heartY(t) * scale;
+
+    const popup = document.createElement("div");
+    popup.className = "popup";
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
+    popup.innerHTML = `<h2>${text}</h2>`;
+
+    document.body.appendChild(popup);
+
+    // ✅ 延长停留时间（3000ms = 3秒）
+    setTimeout(() => {
+        popup.remove();
+    }, 8000);
+
+    t += 0.07; // 控制爱心密度
+}
+
+// ✅ 每 200ms 弹出一个（慢一点更清晰）
+setInterval(createPopup, 100);
+</script>
+
+</body>
+</html>
